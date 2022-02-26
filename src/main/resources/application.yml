@@ -1,0 +1,11 @@
+
+spring:
+  jpa:
+    show-sql: true
+  h2:
+    console:
+      enabled: true  # H2 웹 콘솔을 사용하겠다는 의미
+      path: /h2-console  # 콘솔의 경로
+  datasource:
+    password: suhyuk1027
+    username: suhyuk0544
