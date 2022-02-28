@@ -11,14 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @RequiredArgsConstructor
-@EnableWebSecurity // 1
+@EnableWebSecurity
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // 2
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserService userService; // 3
+    private final UserService userService;
 
     @Override
-    public void configure(WebSecurity web) { // 4
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/css/**", "/js/**", "/img/**","/h2-console/**");
     }
 
@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // 2
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception { // 9
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService)
 
                 .passwordEncoder(new BCryptPasswordEncoder());
