@@ -16,7 +16,6 @@ import java.util.*;
 @AllArgsConstructor
 @Entity
 @Getter
-@Setter
 public class UserInfo implements UserDetails {
 
     @Id

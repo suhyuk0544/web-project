@@ -25,7 +25,7 @@ public class UserController {
 //    }
 
     @PostMapping("/user")
-    public String signup(UserInfoDto infoDto) { // 회원 추가
+    public String signup(UserInfoDto infoDto) {// 회원 추가
         userService.save(infoDto);
         return "redirect:form/login";
     }
