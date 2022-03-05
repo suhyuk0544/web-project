@@ -20,5 +20,17 @@ public class UserInfoDto {
 
     private String auth;
 
+    public Date getjoindate(){
+        joindate = new Date();
+
+        return joindate;
+
+    }
+
+    public String getAuth(){
+        auth = "ROLE_USER";
+
+        return auth;
+    }
 
 }

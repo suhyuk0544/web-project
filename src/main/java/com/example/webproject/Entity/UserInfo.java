@@ -15,7 +15,6 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-@Getter
 public class UserInfo implements UserDetails {
 
     @Id

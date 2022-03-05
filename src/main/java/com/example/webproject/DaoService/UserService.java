@@ -6,7 +6,7 @@ import com.example.webproject.Entity.UserInfo;
 import com.example.webproject.Entity.UserRepository;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.core.userdetails.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,9 +16,16 @@ import java.util.Date;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    public void login(String name, String password){
+
+
+
+    }
 
 
     @Override
@@ -31,9 +38,12 @@ public class UserService implements UserDetailsService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
+
+
         return userRepository.save(UserInfo.builder()
                 .name(infoDto.getName())
                 .auth(infoDto.getAuth())
+                .joindate(infoDto.getjoindate())
                 .password(infoDto.getPassword()).build());
     }
 
