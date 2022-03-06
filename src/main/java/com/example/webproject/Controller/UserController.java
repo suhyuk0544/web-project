@@ -3,6 +3,7 @@ package com.example.webproject.Controller;
 
 import com.example.webproject.DTO.UserInfoDto;
 import com.example.webproject.DaoService.UserService;
+import com.example.webproject.Entity.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,10 +22,19 @@ public class UserController {
 
     private final UserService userService;
 
-//    @GetMapping("/login")
-//    public String login(){
-//        return "form/login";
-//    }
+    @PostMapping("/user")
+    public String login(String name,String password){
+        if (userService.login(password, name)){
+
+            log.info("login s");
+
+            return "form/index";
+
+        }
+        log.info("login f");
+        return "redirect:form/login";
+
+    }
 
     @PostMapping("/user")
     public String signup(UserInfoDto infoDto) {// 회원 추가

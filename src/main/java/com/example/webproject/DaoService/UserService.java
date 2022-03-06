@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -21,12 +22,14 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public void login(String name, String password){
+    public boolean login(String name,String password) throws UsernameNotFoundException {
 
-
+        userRepository.findByNameEqualsAndPasswordEquals(name,password)
+                .orElseThrow(() -> new UsernameNotFoundException((name)));
+        log.info("login"+ name);
+        return true;
 
     }
-
 
     @Override
     public UserInfo loadUserByUsername(String name) throws UsernameNotFoundException {
