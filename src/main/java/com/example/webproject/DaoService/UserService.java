@@ -26,23 +26,25 @@ public class UserService implements UserDetailsService {
 
         userRepository.findByNameEqualsAndPasswordEquals(name,password)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
-        log.info("login"+ name);
+        log.info("login {} ",name);
         return true;
 
     }
 
     @Override
     public UserInfo loadUserByUsername(String name) throws UsernameNotFoundException {
+        log.info("load {} ",name);
         return userRepository.findByname(name)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
+
+
     }
 
     public UserInfo save(UserInfoDto infoDto) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
-
-
+        log.info("sign up");
         return userRepository.save(UserInfo.builder()
                 .name(infoDto.getName())
                 .auth(infoDto.getAuth())
