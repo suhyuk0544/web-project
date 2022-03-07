@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserInfo login(String name, String password) throws UsernameNotFoundException {
+    public void login(String name, String password) throws UsernameNotFoundException {
 
         UserInfo user = userRepository.findByname(name)
                 .orElseThrow(() -> new UsernameNotFoundException(name));
@@ -37,11 +37,13 @@ public class UserService implements UserDetailsService {
 
         Set<GrantedAuthority> roles = new HashSet<>();
 
-        roles = userInfo.setAuth();
+//        roles = userInfo.setAuth();
         //                        .orElseThrow(() -> new UsernameNotFoundException((name)));
         log.info("login {} ",name);
 
-        return userInfo.setAuth(userInfo.getAuth());
+//        return userInfo.setAuth(userInfo.getAuth());
+
+
 
     }
 
