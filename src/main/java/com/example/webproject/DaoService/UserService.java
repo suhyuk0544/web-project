@@ -4,16 +4,19 @@ import com.example.webproject.DTO.UserInfoDto;
 
 import com.example.webproject.Entity.UserInfo;
 import com.example.webproject.Entity.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -22,27 +25,42 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public boolean login(String name,String password) throws UsernameNotFoundException {
+    public UserInfo login(String name, String password) throws UsernameNotFoundException {
 
-        userRepository.findByNameEqualsAndPasswordEquals(name,password)
-                .orElseThrow(() -> new UsernameNotFoundException((name)));
+        UserInfo user = userRepository.findByname(name)
+                .orElseThrow(() -> new UsernameNotFoundException(name));
+
+        UserInfo userInfo = new UserInfo();
+
+        userInfo.setName(userInfo.getName());
+        userInfo.setPassword(userInfo.getPassword());
+
+        Set<GrantedAuthority> roles = new HashSet<>();
+
+        roles = userInfo.setAuth();
+        //                        .orElseThrow(() -> new UsernameNotFoundException((name)));
         log.info("login {} ",name);
-        return true;
+
+        return userInfo.setAuth(userInfo.getAuth());
 
     }
 
     @Override
     public UserInfo loadUserByUsername(String name) throws UsernameNotFoundException {
+
         log.info("load {} ",name);
+
         return userRepository.findByname(name)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
-
-
     }
 
     public UserInfo save(UserInfoDto infoDto) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         infoDto.setPassword(encoder.encode(infoDto.getPassword()));
+
+//        if (infoDto.getName() == null){
+//
+//        }
 
         log.info("sign up");
         return userRepository.save(UserInfo.builder()

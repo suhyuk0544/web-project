@@ -24,25 +24,26 @@ public class UserController {
 
     @PostMapping("/user")
     public String login(String name,String password){
-        if (userService.login(password, name)){
-
-            log.info("login s");
-
-            return "form/index";
-
-        }
-        log.info("login f");
+//        if (userService.login(password, name)){
+//
+//            log.info("login s");
+//
+//            return "redirect:form/index";
+//        }
+//        log.info("login {}",name);
         return "redirect:form/login";
 
     }
 
     @PostMapping("/user")
     public String signup(UserInfoDto infoDto) {// 회원 추가
+
         userService.save(infoDto);
-        log.info("save complete");
+
+        log.info("save {}",infoDto.getName());
+
         return "redirect:form/login";
     }
-
 
     @GetMapping(value = "/logout")
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
