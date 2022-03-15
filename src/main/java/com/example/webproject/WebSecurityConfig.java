@@ -27,12 +27,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/login", "/signup", "/user","/test_db").permitAll() // 누구나 접근 허용
-                .antMatchers("/").hasRole("USER") // USER, ADMIN만 접근 가능
+                .antMatchers("/main").hasRole("USER") // USER, ADMIN만 접근 가능
                 .antMatchers("/").hasRole("ADMIN") // ADMIN만 접근 가능
                 .anyRequest().authenticated() // 나머지 요청들은 권한의 종류에 상관 없이 권한이 있어야 접근 가능
                 .and()
                 .formLogin()
-                .loginPage("/login") // 로그인 페이지 링크
+                .loginPage("/login")// 로그인 페이지 링크
+                .usernameParameter("name")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/main") // 로그인 성공 후 리다이렉트 주소
                 .and()
                 .logout()
@@ -44,8 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService)
 
+        auth.userDetailsService(userService)
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
 

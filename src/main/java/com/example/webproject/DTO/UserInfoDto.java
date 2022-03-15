@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
@@ -16,16 +17,16 @@ public class UserInfoDto {
 
     private String password;
 
+    @CreationTimestamp
     private Date joindate;
 
     private String auth;
 
+
     public Date getjoindate(){
-        joindate = new Date();
-
         return joindate;
-
     }
+
 
     public String getAuth(){
         auth = "ROLE_USER";

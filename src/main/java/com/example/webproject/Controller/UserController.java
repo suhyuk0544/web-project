@@ -22,8 +22,11 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user")
-    public String login(String name,String password){
+//    @PostMapping("/user")
+//    public String login(String name,String password){
+//        userService.login(name,password);
+//
+//
 //        if (userService.login(password, name)){
 //
 //            log.info("login s");
@@ -31,9 +34,9 @@ public class UserController {
 //            return "redirect:form/index";
 //        }
 //        log.info("login {}",name);
-        return "redirect:form/login";
-
-    }
+//        return "redirect:form/login";
+//
+//    }
 
     @PostMapping("/user")
     public String signup(UserInfoDto infoDto) {// 회원 추가

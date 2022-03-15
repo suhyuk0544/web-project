@@ -10,4 +10,6 @@ spring:
     password: suhyuk1027
     username: suhyuk0544
 
+  mustache:
+    expose-request-attributes: true
 

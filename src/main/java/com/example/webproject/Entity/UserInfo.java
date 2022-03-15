@@ -4,6 +4,8 @@ import com.example.webproject.Entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +27,7 @@ public class UserInfo implements UserDetails {
     private String password;
 
     @Column(name = "joindate")
+    @CreationTimestamp
     private Date joindate;
 
 
@@ -48,7 +51,7 @@ public class UserInfo implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
-        for (String role : auth.split("ROLE_ADMIN,ROLE_USER")) {
+        for (String role : auth.split("ROLE_USER,ROLE_ADMIN")) {
             roles.add(new SimpleGrantedAuthority(role));
         }
         return roles;
@@ -66,31 +69,32 @@ public class UserInfo implements UserDetails {
 
 
     @Override
-    public boolean isAccountNonExpired() {
-
+    public boolean isEnabled() {
         return true;
     }
+
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
 
 
     @Override
     public boolean isAccountNonLocked() {
-
         return true;
     }
+
 
 
     @Override
     public boolean isCredentialsNonExpired() {
-
         return true;
     }
 
 
-    @Override
-    public boolean isEnabled() {
-
-        return true;
-    }
 
 }
 

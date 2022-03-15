@@ -25,27 +25,31 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public void login(String name, String password) throws UsernameNotFoundException {
-
-        UserInfo user = userRepository.findByname(name)
-                .orElseThrow(() -> new UsernameNotFoundException(name));
-
-        UserInfo userInfo = new UserInfo();
-
-        userInfo.setName(userInfo.getName());
-        userInfo.setPassword(userInfo.getPassword());
-
-        Set<GrantedAuthority> roles = new HashSet<>();
-
-//        roles = userInfo.setAuth();
-        //                        .orElseThrow(() -> new UsernameNotFoundException((name)));
-        log.info("login {} ",name);
-
-//        return userInfo.setAuth(userInfo.getAuth());
-
-
-
-    }
+//    public UserInfo login(String name, String password) throws UsernameNotFoundException {
+//
+//        UserInfoDto userInfoDto = new UserInfoDto();
+//        UserInfo userInfo = new UserInfo();
+//
+//        if (userRepository.findByname(name)){
+//                .orElseThrow(() -> new UsernameNotFoundException(name));
+//
+//            elif (userInfo.getPassword().equals(userRepository.getByPassword(password))) {
+//
+//            userInfo.setName(userInfo.getName());
+//            userInfo.setPassword(userInfo.getPassword());
+//
+//            userInfo.getAuthorities();
+//            userInfo.isAccountNonExpired();
+//            userInfo.isEnabled();
+//            userInfo.isAccountNonLocked();
+//            userInfo.isCredentialsNonExpired();
+//
+//            log.info("login {} ",name);
+//
+//            return userInfo;
+//        }
+//        return userInfo;
+//    }
 
     @Override
     public UserInfo loadUserByUsername(String name) throws UsernameNotFoundException {
@@ -57,12 +61,10 @@ public class UserService implements UserDetailsService {
     }
 
     public UserInfo save(UserInfoDto infoDto) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
-//        if (infoDto.getName() == null){
-//
-//        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
         log.info("sign up");
         return userRepository.save(UserInfo.builder()
