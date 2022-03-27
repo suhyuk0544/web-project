@@ -1,11 +1,7 @@
 package com.example.webproject.Entity;
-
-import com.example.webproject.Entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,18 +16,20 @@ import java.util.*;
 public class UserInfo implements UserDetails {
 
     @Id
-    @Column(name = "name", unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false, name = "password")
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "joindate")
+    @Column
     @CreationTimestamp
+    @JsonIgnore
     private Date joindate;
 
 
-    @Column(name = "auth")
+    @Column
+    @JsonIgnore
     private String auth;
 
     @OneToMany(mappedBy = "userInfo")
@@ -51,7 +49,7 @@ public class UserInfo implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
-        for (String role : auth.split("ROLE_USER,ROLE_ADMIN")) {
+        for (String role : auth.split(",")) {
             roles.add(new SimpleGrantedAuthority(role));
         }
         return roles;

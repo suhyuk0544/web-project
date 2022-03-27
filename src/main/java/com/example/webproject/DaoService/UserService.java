@@ -3,20 +3,15 @@ package com.example.webproject.DaoService;
 import com.example.webproject.DTO.UserInfoDto;
 
 import com.example.webproject.Entity.UserInfo;
-import com.example.webproject.Entity.UserRepository;
+import com.example.webproject.Repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -66,12 +61,19 @@ public class UserService implements UserDetailsService {
 
         infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
-        log.info("sign up");
+        log.info("builder-----------");
+
+
+
+        log.info("sign up------------");
+
+
         return userRepository.save(UserInfo.builder()
                 .name(infoDto.getName())
                 .auth(infoDto.getAuth())
                 .joindate(infoDto.getjoindate())
                 .password(infoDto.getPassword()).build());
+
     }
 
 //    private Connection conn;

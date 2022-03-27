@@ -1,4 +1,4 @@
-package com.example.webproject;
+package com.example.webproject.Config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -10,7 +10,10 @@ public class MvcConfig implements WebMvcConfigurer {
     // 요청 - 뷰 연결
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/main").setViewName("form/index");
+
         registry.addViewController("/login").setViewName("form/login");
-//        registry.addViewController("/").setViewName("form/login");
+
+        registry.addViewController("/signup").setViewName("form/signup");
+
     }
 }

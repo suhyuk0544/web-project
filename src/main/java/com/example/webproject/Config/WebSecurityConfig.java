@@ -1,4 +1,4 @@
-package com.example.webproject;
+package com.example.webproject.Config;
 
 import com.example.webproject.DaoService.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/login", "/signup", "/user","/test_db").permitAll() // 누구나 접근 허용
-                .antMatchers("/main").hasRole("USER") // USER, ADMIN만 접근 가능
+                .antMatchers("/login", "/signup", "/user","/main").permitAll() // 누구나 접근 허용
+                .antMatchers("/").hasRole("USER") // USER, ADMIN만 접근 가능
                 .antMatchers("/").hasRole("ADMIN") // ADMIN만 접근 가능
                 .anyRequest().authenticated() // 나머지 요청들은 권한의 종류에 상관 없이 권한이 있어야 접근 가능
                 .and()
@@ -36,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("name")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/main") // 로그인 성공 후 리다이렉트 주소
+                .failureForwardUrl("/login")// 로그인 실패 후 주소
                 .and()
                 .logout()
                 .logoutSuccessUrl("/login") // 로그아웃 성공시 리다이렉트 주소

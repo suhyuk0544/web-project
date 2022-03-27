@@ -1,4 +1,4 @@
-package com.example.webproject.Entity;
+package com.example.webproject.Repository;
 
 import com.example.webproject.Entity.UserInfo;
 import org.springframework.data.domain.Example;
@@ -12,9 +12,6 @@ public interface UserRepository extends JpaRepository<UserInfo, String> {
 
     Optional<UserInfo> findByname(String name);
 
-    UserInfo getByName(String name);
-
-    String getByPassword(String password);
 }
 
 

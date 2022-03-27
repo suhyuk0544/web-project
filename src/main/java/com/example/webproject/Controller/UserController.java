@@ -37,13 +37,19 @@ public class UserController {
 //        return "redirect:form/login";
 //
 //    }
+    @GetMapping("/main")
+    public String main(){
+
+        return "form/index";
+
+    }
 
     @PostMapping("/user")
     public String signup(UserInfoDto infoDto) {// 회원 추가
 
         userService.save(infoDto);
 
-        log.info("save {}",infoDto.getName());
+        log.info("save name = {}",infoDto.getName());
 
         return "redirect:form/login";
     }
@@ -52,7 +58,7 @@ public class UserController {
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
 
-        log.info("logout complete");
+        log.info("logout");
         return "redirect:form/login";
     }
 

@@ -3,6 +3,7 @@ package com.example.webproject.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,6 +29,14 @@ public class Post {
     @JsonIgnore
     private UserInfo userInfo;
 
+    @Builder
+    public Post(int id, String title,String content){
 
+        this.id = id;
+
+        this.title = title;
+
+        this.content = content;
+    }
 
 }
