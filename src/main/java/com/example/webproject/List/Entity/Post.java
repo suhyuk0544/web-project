@@ -1,6 +1,7 @@
-package com.example.webproject.Entity;
+package com.example.webproject.List.Entity;
 
 
+import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

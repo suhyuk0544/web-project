@@ -1,9 +1,11 @@
-package com.example.webproject.Controller;
+package com.example.webproject.UserHandle.UserController;
 
 
-import com.example.webproject.DTO.UserInfoDto;
-import com.example.webproject.DaoService.UserService;
-import com.example.webproject.Entity.UserInfo;
+import com.example.webproject.List.ListDTO.PostDto;
+import com.example.webproject.UserHandle.DTO.UserInfoDto;
+import com.example.webproject.List.ListDaoService.ListService;
+import com.example.webproject.UserHandle.UserDaoService.UserService;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,21 +24,13 @@ public class UserController {
 
     private final UserService userService;
 
-//    @PostMapping("/user")
-//    public String login(String name,String password){
-//        userService.login(name,password);
-//
-//
-//        if (userService.login(password, name)){
-//
-//            log.info("login s");
-//
-//            return "redirect:form/index";
-//        }
-//        log.info("login {}",name);
-//        return "redirect:form/login";
-//
-//    }
+    @GetMapping("/form/login")
+    public String t(){
+
+        return "form/index";
+    }
+
+
     @GetMapping("/main")
     public String main(){
 
@@ -61,6 +55,21 @@ public class UserController {
         log.info("logout");
         return "redirect:form/login";
     }
+//    @PostMapping("/user")
+//    public String login(String name,String password){
+//        userService.login(name,password);
+//
+//
+//        if (userService.login(password, name)){
+//
+//            log.info("login s");
+//
+//            return "redirect:form/index";
+//        }
+//        log.info("login {}",name);
+//        return "redirect:form/login";
+//
+//    }
 
 }
 

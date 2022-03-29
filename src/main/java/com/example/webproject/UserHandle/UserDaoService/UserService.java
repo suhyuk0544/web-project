@@ -1,10 +1,10 @@
-package com.example.webproject.DaoService;
+package com.example.webproject.UserHandle.UserDaoService;
 
-import com.example.webproject.DTO.UserInfoDto;
+import com.example.webproject.UserHandle.DTO.UserInfoDto;
 
-import com.example.webproject.Entity.UserInfo;
-import com.example.webproject.Repository.UserRepository;
+import com.example.webproject.UserHandle.Entity.UserInfo;
 
+import com.example.webproject.UserHandle.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -61,19 +63,24 @@ public class UserService implements UserDetailsService {
 
         infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
-        log.info("builder-----------");
 
+        Optional<UserInfo> userInfo = userRepository.findByname(infoDto.getName());
 
+        if (userInfo.isEmpty()){
 
-        log.info("sign up------------");
+            log.info("sign up------------------------------------------- {}",infoDto.getName());
 
+            return userRepository.save(UserInfo.builder()
+                    .name(infoDto.getName())
+                    .auth(infoDto.getAuth())
+                    .joindate(infoDto.getjoindate())
+                    .password(infoDto.getPassword()).build());
 
-        return userRepository.save(UserInfo.builder()
-                .name(infoDto.getName())
-                .auth(infoDto.getAuth())
-                .joindate(infoDto.getjoindate())
-                .password(infoDto.getPassword()).build());
+        } else{
 
+            throw new NullPointerException();
+
+        }
     }
 
 //    private Connection conn;

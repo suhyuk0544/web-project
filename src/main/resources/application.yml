@@ -4,15 +4,27 @@ spring:
     show-sql: true
   h2:
     console:
-      enabled: true  # H2 웹 콘솔을 사용하겠다는 의미# 콘솔의 경로
-      path: /h2-console
+
+      enabled: true  # H2 웹 콘솔을 사용하겠다는 의미
+
+      path: /h2-console # 콘솔의 경로
+
   datasource:
     password: suhyuk1027
     username: suhyuk0544
 
+  thymeleaf:
 
+    suffix: .html
+
+    prefix: classpath:templates/
+
+    cache: false
 
 server:
+
   port: 8080
+
   tomcat:
+
     connection-timeout: 20000

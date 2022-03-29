@@ -1,4 +1,4 @@
-package com.example.webproject.DTO;
+package com.example.webproject.UserHandle.DTO;
 
 
 import lombok.*;

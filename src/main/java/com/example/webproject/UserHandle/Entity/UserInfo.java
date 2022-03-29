@@ -1,4 +1,5 @@
-package com.example.webproject.Entity;
+package com.example.webproject.UserHandle.Entity;
+import com.example.webproject.List.Entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -44,7 +45,6 @@ public class UserInfo implements UserDetails {
         this.auth = auth;
 
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

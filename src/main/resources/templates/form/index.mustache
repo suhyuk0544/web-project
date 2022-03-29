@@ -1,7 +1,7 @@
 {{>layouts/header}}
 
 
-<form class="container"style="margin: 40px" action="form/create" method="post" >
+<form class="container"style="margin: 40px" th:action="@{/user}" method="post" >
     <div class="mb-3">
         <label class="form-label">제목</label>
         <input type="text" class="form-control" name="title">
@@ -9,7 +9,7 @@
     <div class="mb-3">
         <label class="form-label">내용</label>
 
-        <textarea class="form-control" rows="3" name="content"></textarea>
+        <textarea  class="form-control" rows="3" name="content"></textarea>
     </div>
     <button type="submit" class="btn btn-primary">제출</button>
 </form>
