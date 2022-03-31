@@ -4,27 +4,36 @@ import com.example.webproject.List.Entity.Post;
 import com.example.webproject.List.ListDTO.PostDto;
 import com.example.webproject.List.ListRepository;
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
+@Slf4j
 @Service
-public class ListService {
-
+public class ListService{
 
     private ListRepository listRepository;
 
-    public Post LaodByTitle(String title) throws NotFoundException{
+    public Post LoadAllByTitle(String title) throws NotFoundException{
 
         return listRepository.findAllByTitle(title)
                 .orElseThrow(() -> new NotFoundException((title)));
 
     }
 
+    public Post LoadOneByTitle(String title) throws NotFoundException{
+
+        return listRepository.findByTitle(title)
+                .orElseThrow(() -> new NotFoundException((title)));
+
+    }
+
     public Post save(PostDto postDto){
 
+        log.info("title {}", postDto.getTitle());
 
         return listRepository.save(Post.builder()
                 .title(postDto.getTitle())
-                .content(postDto.getContent()).build());
+                .content(postDto.getContent())
+                .createPost(postDto.getCreatePost()).build());
     }
 
 

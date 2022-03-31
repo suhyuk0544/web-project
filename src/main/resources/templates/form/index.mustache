@@ -1,18 +1,48 @@
 {{>layouts/header}}
 
 
-<form class="container"style="margin: 40px" th:action="@{/user}" method="post" >
-    <div class="mb-3">
-        <label class="form-label">제목</label>
-        <input type="text" class="form-control" name="title">
-    </div>
-    <div class="mb-3">
-        <label class="form-label">내용</label>
 
-        <textarea  class="form-control" rows="3" name="content"></textarea>
+<body xmlns="http://www.w3.org/1999/html">
+<div class="container my-3">
+    <table class="table">
+        <thead>
+        <tr class="thead-dark">
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+
+    </table>
+
+    </ul>
+    <a href="" class="btn btn-primary">질문 등록하기</a>
+
+</div>
+<!--<aside style="float: right; position: relative;">
+    <img src="{%static 'banner1.png' %}" alt="banner" width="200" height="600" style="position: relative; bottom: 200px; right: 50px;">
+</aside>-->
+</body>
+
+
+
+
+
+
+<!--<body class="bg-gradient-primary">
+
+<div class="container">
+    <div class="container-fluid" style="margin-top: 40px">
+        <form th:action="@{/savePost}" method="post">
+            <div class="form-group"><label for="">제목 </label><textarea class="form-control form-control-solid" type="text" name="title" rows="1"></textarea></div>
+            <div class="form-group"><label for="">내용 </label><textarea class="form-control form-control-solid" type="text" name="content" rows="20"></textarea></div>
+            <input class="btn btn-primary" type="submit" value="저장 ">
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary">제출</button>
-</form>
+</div>
+
+</body>-->
+
 
 {{>layouts/footer}}
 

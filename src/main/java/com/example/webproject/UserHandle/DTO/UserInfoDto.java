@@ -13,15 +13,9 @@ public class UserInfoDto implements Serializable {
 
     private String password;
 
-    @CreationTimestamp
     private Date joindate;
 
     private String auth;
-
-
-    public Date getjoindate(){
-        return joindate;
-    }
 
     public String getAuth(){
 

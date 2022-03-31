@@ -1,18 +1,13 @@
 package com.example.webproject.UserHandle.UserDaoService;
-
 import com.example.webproject.UserHandle.DTO.UserInfoDto;
-
 import com.example.webproject.UserHandle.Entity.UserInfo;
-
 import com.example.webproject.UserHandle.UserRepository;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -73,7 +68,7 @@ public class UserService implements UserDetailsService {
             return userRepository.save(UserInfo.builder()
                     .name(infoDto.getName())
                     .auth(infoDto.getAuth())
-                    .joindate(infoDto.getjoindate())
+                    .joindate(infoDto.getJoindate())
                     .password(infoDto.getPassword()).build());
 
         } else{

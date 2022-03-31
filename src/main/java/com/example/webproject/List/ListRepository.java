@@ -10,5 +10,7 @@ public interface ListRepository extends JpaRepository<Post,String> {
 
     Optional<Post> findAllByTitle(String title);
 
+    Optional<Post> findByTitle(String title);
+
 
 }

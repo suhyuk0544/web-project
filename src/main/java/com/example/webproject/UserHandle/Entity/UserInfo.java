@@ -6,7 +6,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.util.*;
 
@@ -44,6 +43,17 @@ public class UserInfo implements UserDetails {
         this.joindate = joindate;
         this.auth = auth;
 
+    }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", joindate=" + joindate +
+                ", auth='" + auth + '\'' +
+                ", posts=" + posts +
+                '}';
     }
 
     @Override

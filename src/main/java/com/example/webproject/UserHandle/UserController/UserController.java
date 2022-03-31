@@ -24,19 +24,19 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/form/login")
-    public String t(){
+//    @GetMapping("/form/login")
+//    public String t(){
+//
+//        return "form/index";
+//    }
 
-        return "form/index";
-    }
 
-
-    @GetMapping("/main")
-    public String main(){
-
-        return "form/index";
-
-    }
+////    @GetMapping("/main")
+//    public String main(){
+//
+//        return "form/index";
+//
+//    }
 
     @PostMapping("/user")
     public String signup(UserInfoDto infoDto) {// 회원 추가
