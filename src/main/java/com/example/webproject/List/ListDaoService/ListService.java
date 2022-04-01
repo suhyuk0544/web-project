@@ -5,7 +5,11 @@ import com.example.webproject.List.ListDTO.PostDto;
 import com.example.webproject.List.ListRepository;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 @Slf4j
 @Service
 public class ListService{
@@ -26,7 +30,7 @@ public class ListService{
 
     }
 
-    public Post save(PostDto postDto){
+    public Post save(PostDto postDto) {
 
         log.info("title {}", postDto.getTitle());
 
@@ -34,6 +38,17 @@ public class ListService{
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
                 .createPost(postDto.getCreatePost()).build());
+
+    }
+
+    public List<Post> postPage(String title){
+
+        List<Post> postPage = listRepository.findByTitleContaining(title);
+
+
+
+        return postPage;
+
     }
 
 

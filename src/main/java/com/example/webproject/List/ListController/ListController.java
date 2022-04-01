@@ -7,8 +7,11 @@ import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -17,6 +20,25 @@ public class ListController {
 
     private final ListService listService;
 
+    @GetMapping("/main")
+    public String search(PostDto postDto, Model model){
+
+        List<Post> postList = listService.postPage(postDto.getTitle());
+
+        model.addAttribute("postliat",postList);
+
+        return "";
+
+    }
+
+    @GetMapping("main/formpost")
+    public String postform() {
+
+        return "form/post";
+
+    }
+
+
     @GetMapping("/form/login")
     public String um(){
 
@@ -24,19 +46,24 @@ public class ListController {
     }
 
     @PostMapping("/find")
-    public void view(PostDto postDto){
+    public Post view(PostDto postDto){
 
         try {
-            listService.LoadOneByTitle(postDto.getTitle());
+            Post post = listService.LoadOneByTitle(postDto.getTitle());
+
+            return post;
 
         } catch (NotFoundException e) {
 
             e.printStackTrace();
         }
 
+        return null;
     }
     @PostMapping("/findall")
     public void viewall(PostDto postDto) {
+
+//        listService.LoadAllByTitle(postDto.getTitle());
 
 
 
