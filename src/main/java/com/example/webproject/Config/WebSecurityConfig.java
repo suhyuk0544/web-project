@@ -24,10 +24,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http
                 .authorizeRequests()
-                .antMatchers("/login", "/signup", "/user","/savePost").permitAll() // 누구나 접근 허용
-                .antMatchers("/main","/post").hasRole("USER") // USER, ADMIN만 접근 가능
+                .antMatchers("/login", "/signup", "/user").permitAll() // 누구나 접근 허용
+                .antMatchers("/main","/savePost","/formpost").hasRole("USER") // USER, ADMIN만 접근 가능
                 .antMatchers("/").hasRole("ADMIN") // ADMIN만 접근 가능
                 .anyRequest().authenticated() // 나머지 요청들은 권한의 종류에 상관 없이 권한이 있어야 접근 가능
                 .and()
@@ -41,6 +42,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/login") // 로그아웃 성공시 리다이렉트 주소
                 .invalidateHttpSession(true) // 세션 날리기
+                .and()
+                .rememberMe()
+                .and()
+                .csrf().ignoringAntMatchers("/main/**")
 
         ;
     }

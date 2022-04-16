@@ -6,11 +6,17 @@ import com.example.webproject.List.ListDaoService.ListService;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -20,32 +26,31 @@ public class ListController {
 
     private final ListService listService;
 
-    @GetMapping("/main")
-    public String search(PostDto postDto, Model model){
+    private static final List<Post> posts = new ArrayList<>();
 
-        List<Post> postList = listService.postPage(postDto.getTitle());
+    @PostMapping("/main/savePost")
+    public String Postsave(PostDto postDto){
 
-        model.addAttribute("postliat",postList);
+        log.info("Title = {} CreateTime = {}", postDto.getTitle(),postDto.getCreateTime());
+
+        listService.save(postDto);
+
+        return "redirect:/main";
+
+    }
+
+    @GetMapping("/search")
+    public String search(@PageableDefault Pageable pageable, PostDto postDto, Model model){
+
+        Page<Post> postList = listService.postPage(postDto.getTitle());
+
+        model.addAttribute("postList",postList);
 
         return "";
 
     }
 
-    @GetMapping("main/formpost")
-    public String postform() {
-
-        return "form/post";
-
-    }
-
-
-    @GetMapping("/form/login")
-    public String um(){
-
-        return "redirect:/main";
-    }
-
-    @PostMapping("/find")
+    @GetMapping("/find")
     public Post view(PostDto postDto){
 
         try {
@@ -69,15 +74,18 @@ public class ListController {
 
     }
 
-    @PostMapping("/savePost")
-    public String Postsave(PostDto postDto){
+    @GetMapping("main/formpost")
+    public String postform() {
 
-        log.info("save = {}", postDto.getTitle());
+        return "form/post";
 
-        listService.save(postDto);
+    }
 
-        return "form/index";
 
+    @GetMapping("/form/login")
+    public String um(){
+
+        return "redirect:/main";
     }
 
 

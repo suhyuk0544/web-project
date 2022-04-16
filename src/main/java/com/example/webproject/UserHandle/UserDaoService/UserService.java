@@ -63,7 +63,7 @@ public class UserService implements UserDetailsService {
 
         if (userInfo.isEmpty()){
 
-            log.info("sign up------------------------------------------- {}",infoDto.getName());
+            log.info("sign up : {} time : {}",infoDto.getName(),infoDto.getJoindate());
 
             return userRepository.save(UserInfo.builder()
                     .name(infoDto.getName())

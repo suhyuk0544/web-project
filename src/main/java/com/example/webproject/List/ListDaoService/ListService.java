@@ -6,15 +6,19 @@ import com.example.webproject.List.ListRepository;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
 public class ListService{
 
-    private ListRepository listRepository;
+    private final ListRepository listRepository;
+
+    public ListService(ListRepository listRepository) {
+        this.listRepository = listRepository;
+    }
+
 
     public Post LoadAllByTitle(String title) throws NotFoundException{
 
@@ -32,20 +36,18 @@ public class ListService{
 
     public Post save(PostDto postDto) {
 
-        log.info("title {}", postDto.getTitle());
+//        log.info("title = {} time = {}", postDto.getTitle(), postDto.getCreateTime());
 
         return listRepository.save(Post.builder()
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
-                .createPost(postDto.getCreatePost()).build());
+                .createTime(postDto.getCreateTime()).build());
 
     }
 
-    public List<Post> postPage(String title){
+    public Page<Post> postPage(String title){
 
-        List<Post> postPage = listRepository.findByTitleContaining(title);
-
-
+        Page<Post> postPage = listRepository.findByTitleContaining(title, Pageable.unpaged());
 
         return postPage;
 

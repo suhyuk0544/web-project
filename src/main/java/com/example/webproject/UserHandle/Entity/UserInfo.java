@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
 public class UserInfo implements UserDetails {

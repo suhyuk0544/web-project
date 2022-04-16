@@ -14,6 +14,6 @@ public class PostDto implements Serializable {
     private final String content;
 
     @CreationTimestamp
-    private final Date CreatePost;
+    private final Date CreateTime;
 
 }

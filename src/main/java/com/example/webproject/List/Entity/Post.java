@@ -3,10 +3,7 @@ package com.example.webproject.List.Entity;
 
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -14,7 +11,7 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Post {
 
@@ -29,22 +26,20 @@ public class Post {
     private String content;
 
     @CreationTimestamp
-    private Date CreatePost;
+    private Date createTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private UserInfo userInfo;
 
     @Builder
-    public Post(int id, String title,String content,Date createPost){
-
-        this.id = id;
+    public Post(String title,String content,Date createTime){
 
         this.title = title;
 
         this.content = content;
 
-        this.CreatePost = createPost;
+        this.createTime = createTime;
 
     }
 
@@ -54,7 +49,7 @@ public class Post {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", CreatePost=" + CreatePost +
+                ", createTime=" + createTime +
                 ", userInfo=" + userInfo +
                 '}';
     }
