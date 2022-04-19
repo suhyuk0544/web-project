@@ -1,33 +1,33 @@
 {{>layouts/header}}
 
 
-
 <body xmlns="http://www.w3.org/1999/html">
 <div class="container my-3">
     <table class="table">
         <thead>
-        <tr class="thead-light" style="margin-top: 40px">
+        <tr class="thead-dark" style="margin-top: 40px">
             <th>번호</th>
             <th>제목</th>
             <th>작성일시</th>
         </tr>
         </thead>
-        {{#searchlist}}
+        {{#postList}}
             <tbody>
             <tr>
                 <th scope="row">{{id}}</th>
                 <td><a href="#">{{title}}</a></td>
-                <td>{{createPost}}</td>
+                <td>{{createTime}}</td>
             </tr>
             </tbody>
-        {{/searchlist}}
+        {{/postList}}
 
     </table>
 
     </ul>
-    <a href="main/formpost" class="btn btn-primary">질문 등록하기</a>
+    <a href="/main/formpost" class="btn btn-primary">질문 등록하기</a>
 
 </div>
+
 <!--<aside style="float: right; position: relative;">
     <img src="{%static 'banner1.png' %}" alt="banner" width="200" height="600" style="position: relative; bottom: 200px; right: 50px;">
 </aside>-->

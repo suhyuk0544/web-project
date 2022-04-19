@@ -13,10 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -31,22 +28,22 @@ public class ListController {
     @PostMapping("/main/savePost")
     public String Postsave(PostDto postDto){
 
-        log.info("Title = {} CreateTime = {}", postDto.getTitle(),postDto.getCreateTime());
-
         listService.save(postDto);
+
+        log.info("Title = {} CreateTime = {}", postDto.getTitle(),postDto.getCreateTime());
 
         return "redirect:/main";
 
     }
 
-    @GetMapping("/search")
-    public String search(@PageableDefault Pageable pageable, PostDto postDto, Model model){
+    @GetMapping("/main/search")
+    public String search(String title, Model model){
 
-        Page<Post> postList = listService.postPage(postDto.getTitle());
+        List<Post> postList = listService.postPage(title);
 
         model.addAttribute("postList",postList);
 
-        return "";
+        return "form/index";
 
     }
 

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class ListService{
@@ -45,11 +47,11 @@ public class ListService{
 
     }
 
-    public Page<Post> postPage(String title){
+    public List<Post> postPage(String title){
 
-        Page<Post> postPage = listRepository.findByTitleContaining(title, Pageable.unpaged());
+        List<Post> postList = listRepository.findByTitleContaining(title);
 
-        return postPage;
+        return postList;
 
     }
 

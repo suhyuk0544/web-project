@@ -12,11 +12,15 @@ import java.util.Optional;
 @Repository
 public interface ListRepository extends JpaRepository<Post,String> {
 
+    @Query("select p from Post p where p.title = ?1")
     Optional<Post> findAllByTitle(String title);
 
+    @Query("select p from Post p where p.title = ?1")
     Optional<Post> findByTitle(String title);
 
-    Page<Post> findByTitleContaining(String title, Pageable pageable);
+
+    @Query("select p from Post p where p.title like concat('%', ?1, '%')")
+    List<Post> findByTitleContaining(String title);
 
 
 
