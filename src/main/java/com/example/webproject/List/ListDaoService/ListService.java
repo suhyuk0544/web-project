@@ -3,6 +3,8 @@ package com.example.webproject.List.ListDaoService;
 import com.example.webproject.List.Entity.Post;
 import com.example.webproject.List.ListDTO.PostDto;
 import com.example.webproject.List.ListRepository;
+import com.example.webproject.UserHandle.DTO.UserInfoDto;
+import com.example.webproject.UserHandle.Entity.UserInfo;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,9 +38,13 @@ public class ListService{
 
     }
 
-    public Post save(PostDto postDto) {
+    public Post save(PostDto postDto) throws NullPointerException {
 
-//        log.info("title = {} time = {}", postDto.getTitle(), postDto.getCreateTime());
+        if (postDto.getTitle().isEmpty() || postDto.getContent().isEmpty()){
+
+            throw new NullPointerException();
+
+        }
 
         return listRepository.save(Post.builder()
                 .title(postDto.getTitle())
@@ -47,14 +53,21 @@ public class ListService{
 
     }
 
-    public List<Post> postPage(String title){
+    public List<Post> postPage(PostDto postDto){
 
-        List<Post> postList = listRepository.findByTitleContaining(title);
+        List<Post> postList = listRepository.findByTitleContaining(postDto.getTitle());
 
         return postList;
 
     }
 
+    public void delete(PostDto postDto){
+
+        listRepository.deleteByTitle(postDto.getTitle());
+
+
+
+    }
 
 
 }

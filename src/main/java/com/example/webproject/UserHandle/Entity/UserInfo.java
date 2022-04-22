@@ -38,9 +38,13 @@ public class UserInfo implements UserDetails {
 
     @Builder
     public UserInfo(String name, String password,Date joindate ,String auth) {
+
         this.name = name;
+
         this.password = password;
+
         this.joindate = joindate;
+
         this.auth = auth;
 
     }

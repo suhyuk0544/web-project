@@ -6,9 +6,6 @@ import com.example.webproject.List.ListDaoService.ListService;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,9 +34,9 @@ public class ListController {
     }
 
     @GetMapping("/main/search")
-    public String search(String title, Model model){
+    public String search(PostDto postDto, Model model){
 
-        List<Post> postList = listService.postPage(title);
+        List<Post> postList = listService.postPage(postDto);
 
         model.addAttribute("postList",postList);
 
@@ -62,13 +59,20 @@ public class ListController {
 
         return null;
     }
-    @PostMapping("/findall")
-    public void viewall(PostDto postDto) {
 
-//        listService.LoadAllByTitle(postDto.getTitle());
+    @PostMapping("/delete")
+    public String delete(PostDto postDto) {
 
+        listService.delete(postDto);
 
+        log.info("title = {} delete",postDto.getTitle());
 
+        return "redirect:/main";
+    }
+
+    @GetMapping("/delete/form")
+    public String deleteform(){
+        return "view";
     }
 
     @GetMapping("main/formpost")
@@ -78,13 +82,10 @@ public class ListController {
 
     }
 
-
     @GetMapping("/form/login")
     public String um(){
 
         return "redirect:/main";
     }
-
-
 
 }

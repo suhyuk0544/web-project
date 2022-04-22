@@ -45,8 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .rememberMe()
                 .and()
-                .csrf().ignoringAntMatchers("/main/**")
-
+                .csrf().ignoringAntMatchers("/main/**","/delete/**")
         ;
     }
 

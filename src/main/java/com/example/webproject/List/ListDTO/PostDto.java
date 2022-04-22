@@ -1,19 +1,22 @@
 package com.example.webproject.List.ListDTO;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 public class PostDto implements Serializable {
 
-    private final String title;
+    private String title;
 
-    private final String content;
+    private String content;
 
     @CreationTimestamp
-    private final Date CreateTime;
+    private Date CreateTime;
 
 }

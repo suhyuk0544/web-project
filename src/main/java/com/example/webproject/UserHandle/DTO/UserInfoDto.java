@@ -6,7 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
-@Data
+@Getter
+@Setter
 public class UserInfoDto implements Serializable {
 
     private String name;
