@@ -53,9 +53,9 @@ public class ListService{
 
     }
 
-    public List<Post> postPage(PostDto postDto){
+    public List<Post> postPage(PostDto postDto,Pageable pageable){
 
-        List<Post> postList = listRepository.findByTitleContaining(postDto.getTitle());
+        List<Post> postList = listRepository.findByTitleContaining(postDto.getTitle(),pageable);
 
         return postList;
 

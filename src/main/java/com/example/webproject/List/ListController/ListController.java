@@ -6,6 +6,8 @@ import com.example.webproject.List.ListDaoService.ListService;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +36,9 @@ public class ListController {
     }
 
     @GetMapping("/main/search")
-    public String search(PostDto postDto, Model model){
+    public String search(@PageableDefault(size = 7,sort = "id") Pageable pageable,PostDto postDto, Model model){
 
-        List<Post> postList = listService.postPage(postDto);
+        List<Post> postList = listService.postPage(postDto,pageable);
 
         model.addAttribute("postList",postList);
 
