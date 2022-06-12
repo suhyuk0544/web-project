@@ -21,8 +21,6 @@ public interface ListRepository extends JpaRepository<Post,String> {
     @Query("select p from Post p where p.title = ?1")
     Optional<Post> findByTitle(String title);
 
-
-
     @Query("select p from Post p where p.title like concat('%', ?1, '%')")
     List<Post> findByTitleContainingOrderById(String title, Pageable pageable);
 
