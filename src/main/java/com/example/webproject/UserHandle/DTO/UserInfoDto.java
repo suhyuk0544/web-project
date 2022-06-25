@@ -25,5 +25,4 @@ public class UserInfoDto implements Serializable {
 
         return auth;
     }
-
 }
