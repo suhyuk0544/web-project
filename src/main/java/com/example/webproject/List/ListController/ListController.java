@@ -11,18 +11,17 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 public class ListController {
-
     private final ListService listService;
-
-    private static final List<Post> posts = new ArrayList<>();
 
     @PostMapping("/main/savePost")
     public String Postsave(PostDto postDto){
@@ -35,8 +34,23 @@ public class ListController {
 
     }
 
+    @GetMapping("/main/{id}")
+    public String detail(@PathVariable int id,Model model){
+        try {
+            Post post = listService.FindById(id);
+
+            model.addAttribute("Post",post);
+
+        } catch (NotFoundException e) {
+
+            e.printStackTrace();
+
+        }
+        return "form/detail";
+    }
+
     @GetMapping("/main/search")
-    public String search(@PageableDefault(size = 7,sort = "id") Pageable pageable,PostDto postDto, Model model){
+    public String search(@PageableDefault(size = 20,sort = "id") Pageable pageable,PostDto postDto, Model model){
 
         List<Post> postList = listService.postPage(postDto,pageable);
 
@@ -48,11 +62,9 @@ public class ListController {
 
     @GetMapping("/find")
     public Post view(PostDto postDto){
-
         try {
-            Post post = listService.LoadOneByTitle(postDto.getTitle());
 
-            return post;
+            return listService.LoadOneByTitle(postDto.getTitle());
 
         } catch (NotFoundException e) {
 
