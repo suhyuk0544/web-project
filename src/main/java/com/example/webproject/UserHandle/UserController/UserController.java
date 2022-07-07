@@ -25,13 +25,13 @@ public class UserController {
     @GetMapping("/main/**")
     public String LoadLoginUserName(HttpServletRequest request){
 
-        HttpSession session = request.getSession();
-
         UserInfo user = (UserInfo)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         String name = user.getName();
 
-        session.setAttribute("name",name);
+        HttpSession session = request.getSession();
+
+        session.setAttribute("loginUser",name);
 
         return "form/index";
     }
@@ -41,13 +41,14 @@ public class UserController {
 
         userService.save(infoDto);
 
-        log.info("save: name = {}",infoDto.getName());
+        log.info("save: {}",infoDto);
 
         return "redirect:form/login";
     }
 
     @GetMapping(value = "/logout")
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
 
         log.info("logout");

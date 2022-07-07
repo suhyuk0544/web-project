@@ -25,4 +25,13 @@ public class UserInfoDto implements Serializable {
 
         return auth;
     }
+
+    @Override
+    public String toString() {
+
+        return "UserInfoDto{" +
+                "name='" + name + '\'' +
+                ", auth='" + auth + '\'' +
+                '}';
+    }
 }

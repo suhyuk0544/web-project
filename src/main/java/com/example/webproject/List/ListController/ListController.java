@@ -3,17 +3,18 @@ package com.example.webproject.List.ListController;
 import com.example.webproject.List.Entity.Post;
 import com.example.webproject.List.ListDTO.PostDto;
 import com.example.webproject.List.ListDaoService.ListService;
+import com.example.webproject.UserHandle.Entity.UserInfo;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -26,9 +27,11 @@ public class ListController {
     @PostMapping("/main/savePost")
     public String Postsave(PostDto postDto){
 
-        listService.save(postDto);
+        UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        log.info("Title = {} CreateTime = {}", postDto.getTitle(),postDto.getCreateTime());
+        listService.save(postDto,user);
+
+        log.info("Post = {}", postDto);
 
         return "redirect:/main";
 
@@ -86,7 +89,9 @@ public class ListController {
 
     @GetMapping("/delete/form")
     public String deleteform(){
+
         return "view";
+
     }
 
     @GetMapping("main/formpost")

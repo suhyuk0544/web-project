@@ -1,6 +1,7 @@
 package com.example.webproject.UserHandle.Entity;
 import com.example.webproject.List.Entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.micrometer.core.lang.Nullable;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,9 +11,10 @@ import javax.persistence.*;
 import java.util.*;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table
 public class UserInfo implements UserDetails {
 
     @Id
@@ -34,6 +36,7 @@ public class UserInfo implements UserDetails {
 
     @OneToMany(mappedBy = "userInfo")
     @JsonIgnore
+    @Nullable
     private List<Post> posts = new ArrayList<>();
 
     @Builder

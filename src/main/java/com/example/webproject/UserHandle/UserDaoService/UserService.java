@@ -18,7 +18,8 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-//    public UserInfo login(String name, String password) throws UsernameNotFoundException {
+
+    //    public UserInfo login(String name, String password) throws UsernameNotFoundException {
 //
 //        UserInfoDto userInfoDto = new UserInfoDto();
 //        UserInfo userInfo = new UserInfo();
