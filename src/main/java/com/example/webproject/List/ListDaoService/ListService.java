@@ -3,6 +3,7 @@ package com.example.webproject.List.ListDaoService;
 import com.example.webproject.List.Entity.Post;
 import com.example.webproject.List.ListDTO.PostDto;
 import com.example.webproject.List.ListRepository;
+import com.example.webproject.UserHandle.Entity.UserInfo;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -33,18 +34,20 @@ public class ListService{
 
     }
 
-    public void save(PostDto postDto) throws NullPointerException {
+    public void save(PostDto postDto, UserInfo user) throws NullPointerException {
 
         if (postDto.getTitle().isEmpty() || postDto.getContent().isEmpty()){
 
             throw new NullPointerException();
 
+        }else {
+            listRepository.save(Post.builder()
+                    .title(postDto.getTitle())
+                    .content(postDto.getContent())
+                    .createTime(postDto.getCreateTime())
+                    .userInfo(user).build());
         }
 
-        listRepository.save(Post.builder()
-                .title(postDto.getTitle())
-                .content(postDto.getContent())
-                .createTime(postDto.getCreateTime()).build());
     }
 
     public List<Post> postPage(PostDto postDto,Pageable pageable){

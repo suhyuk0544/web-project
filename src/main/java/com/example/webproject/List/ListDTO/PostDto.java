@@ -19,4 +19,11 @@ public class PostDto implements Serializable {
     @CreationTimestamp
     private Date CreateTime;
 
+    @Override
+    public String toString() {
+        return "PostDto{" +
+                "title='" + title + '\'' +
+                ", content='" + content +
+                '}';
+    }
 }

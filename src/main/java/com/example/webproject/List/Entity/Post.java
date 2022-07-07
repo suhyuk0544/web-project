@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 public class Post {
 
@@ -33,7 +33,7 @@ public class Post {
     private UserInfo userInfo;
 
     @Builder
-    public Post(String title,String content,Date createTime){
+    public Post(String title,String content,Date createTime,UserInfo userInfo){
 
         this.title = title;
 
@@ -41,6 +41,7 @@ public class Post {
 
         this.createTime = createTime;
 
+        this.userInfo = userInfo;
     }
 
     @Override
