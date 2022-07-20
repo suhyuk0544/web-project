@@ -10,10 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
-public class ListService{
+public class ListService {
 
     private final ListRepository listRepository;
 
@@ -21,7 +22,19 @@ public class ListService{
         this.listRepository = listRepository;
     }
 
-    public Post FindById(int id) throws NotFoundException{
+    public Post setPost(PostDto postDto,int id) throws NotFoundException {
+
+        Post post = FindById(id);
+
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+
+        listRepository.save(post);
+
+        return post;
+    }
+
+    public Post FindById(int id) throws NotFoundException {
 
         return listRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.valueOf(id)));

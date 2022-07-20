@@ -12,6 +12,8 @@ import java.util.Date;
 @Setter
 public class PostDto implements Serializable {
 
+    private int id;
+
     private String title;
 
     private String content;
@@ -23,7 +25,7 @@ public class PostDto implements Serializable {
     public String toString() {
         return "PostDto{" +
                 "title='" + title + '\'' +
-                ", content='" + content +
+                ", content='" + content + '\''+
                 '}';
     }
 }

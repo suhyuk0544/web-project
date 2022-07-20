@@ -9,13 +9,13 @@ spring:
 
   h2.console:
     enabled: true
-
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
   logging:
   level:
     org.hibernate.SQL: debug
@@ -36,10 +36,24 @@ server:
   port: 8080
 
   tomcat:
+
     connection-timeout: 20000
+
+    remoteip:
+
+      protocol-header:
+
   servlet:
+
     session:
+
       timeout: 60m
+  error:
+
+
+    whitelabel:
+
+      enabled: false
 
 management:
   endpoints:

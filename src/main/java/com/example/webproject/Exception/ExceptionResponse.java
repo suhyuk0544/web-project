@@ -1,20 +1,22 @@
 package com.example.webproject.Exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ExceptionResponse {
 
     private Date timestamp;
 
     private String message;
 
+    private HttpStatus status;
+
     private String details;
+
 }
 

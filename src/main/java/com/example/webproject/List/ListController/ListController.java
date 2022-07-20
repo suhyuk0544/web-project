@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +25,28 @@ import java.util.List;
 public class ListController {
     private final ListService listService;
 
+    @PostMapping("/main/{id}/setPost")
+    public String setPost(PostDto postDto,@PathVariable int id) throws NotFoundException {
+
+        Post post = listService.setPost(postDto,id);
+
+        log.info("Set Post = {}",post);
+
+        return "redirect:/main";
+    }
+
+    @GetMapping("/main/{id}/setPost")
+    public String setPostForm(Model model,@PathVariable int id) throws NotFoundException {
+
+        Post post = listService.FindById(id);
+
+        model.addAttribute("SetPost",post);
+
+        return "form/setPost";
+    }
+
     @PostMapping("/main/savePost")
-    public String Postsave(PostDto postDto){
+    public String save(PostDto postDto){
 
         UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -60,7 +81,6 @@ public class ListController {
         model.addAttribute("postList",postList);
 
         return "form/index";
-
     }
 
     @GetMapping("/find")
@@ -75,6 +95,7 @@ public class ListController {
         }
 
         return null;
+
     }
 
     @PostMapping("/delete")
@@ -91,6 +112,12 @@ public class ListController {
     public String deleteform(){
 
         return "view";
+
+    }
+    @GetMapping("/")
+    public String index(){
+
+        return "form/index";
 
     }
 

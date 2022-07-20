@@ -1,6 +1,5 @@
 package com.example.webproject.List.Entity;
 
-
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -12,7 +11,10 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Getter
+@Setter
+@Entity(name = "Post")
+@Table
 public class Post {
 
     @Id
@@ -49,9 +51,14 @@ public class Post {
         return "Post{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", createTime=" + createTime +
-                ", userInfo=" + userInfo +
-                '}';
+                ", content='" + content + '\'';
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content){
+        this.content = content;
     }
 }

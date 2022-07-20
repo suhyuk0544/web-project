@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body xmlns="http://www.w3.org/1999/html">>
+
+<div class="container my-3">
+    <table class="table">
+        <thead>
+        <tr class="thead-dark" style="margin-top: 40px">
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+        {{#Exception}}
+        <tbody>
+        <tr>
+            <th scope="row">{{status}}</th>
+            <td><a href="{{id}}">{{message}}</a></td>
+            <td>{{timestamp}}</td>
+        </tr>
+        </tbody>
+        {{/Exception}}
+
+    </table>
+
+
+</div>
+
+
+
+</body>
+</html>

@@ -4,7 +4,6 @@ import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.example.webproject.UserHandle.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,26 +48,25 @@ public class UserService implements UserDetailsService {
     @Override
     public UserInfo loadUserByUsername(String name) throws UsernameNotFoundException {
 
-        log.info("load {} ",name);
+        log.info("login {} ",name);
 
         return userRepository.findByname(name)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
     }
 
-    public UserInfo save(UserInfoDto infoDto) {
+    public void save(UserInfoDto infoDto) {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
-
         Optional<UserInfo> userInfo = userRepository.findByname(infoDto.getName());
 
         if (userInfo.isEmpty()){
 
-            log.info("sign up : {} time : {}",infoDto.getName(),infoDto.getJoindate());
+            log.info("sign up : {}",infoDto);
 
-            return userRepository.save(UserInfo.builder()
+            userRepository.save(UserInfo.builder()
                     .name(infoDto.getName())
                     .auth(infoDto.getAuth())
                     .joindate(infoDto.getJoindate())
