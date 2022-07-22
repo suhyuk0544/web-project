@@ -51,7 +51,8 @@ public class Post {
         return "Post{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", content='" + content + '\'';
+                ", content='" + content + '\'' +
+                "}";
     }
 
     public void setTitle(String title) {

@@ -6,6 +6,7 @@ import com.example.webproject.List.ListRepository;
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,15 @@ public class ListService {
     private final ListRepository listRepository;
 
     public ListService(ListRepository listRepository) {
+
         this.listRepository = listRepository;
+
+    }
+
+    public Page<Post> postPage(Pageable pageable){
+
+        return listRepository.findAll(pageable);
+
     }
 
     public Post setPost(PostDto postDto,int id) throws NotFoundException {
@@ -48,6 +57,7 @@ public class ListService {
     }
 
     public void save(PostDto postDto, UserInfo user) throws NullPointerException {
+
 
         if (postDto.getTitle().isEmpty() || postDto.getContent().isEmpty()){
 

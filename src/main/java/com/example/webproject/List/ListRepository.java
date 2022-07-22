@@ -33,5 +33,6 @@ public interface ListRepository extends JpaRepository<Post,String> {
     @Query("delete from Post p where p.title = ?1")
     void deleteByTitle(String Title);
 
+    Page<Post> findAll(Pageable pageable);
 
 }
