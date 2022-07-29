@@ -1,6 +1,8 @@
 package com.example.webproject.List;
 
 import com.example.webproject.List.Entity.Post;
+import com.example.webproject.UserHandle.Entity.UserInfo;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,6 +29,9 @@ public interface ListRepository extends JpaRepository<Post,String> {
 
     @Query("select p from Post p where p.title like concat('%', ?1, '%')")
     List<Post> findByTitleContainingOrderById(String title, Pageable pageable);
+
+    @Query("select p from Post p where p.userInfo = ?1")
+    Page<Post> findPostsByUserInfo(UserInfo userInfo, Pageable pageable);
 
     @Transactional
     @Modifying
