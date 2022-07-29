@@ -4,6 +4,7 @@ import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.example.webproject.UserHandle.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,7 +16,8 @@ import java.util.Optional;
 @Slf4j
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     //    public UserInfo login(String name, String password) throws UsernameNotFoundException {
@@ -43,7 +45,11 @@ public class UserService implements UserDetailsService {
 //        }
 //        return userInfo;
 //    }
+    public UserInfo FindUser(String name) throws UsernameNotFoundException{
 
+        return userRepository.findByname(name)
+                .orElseThrow(() -> new UsernameNotFoundException((name)));
+    }
 
     @Override
     public UserInfo loadUserByUsername(String name) throws UsernameNotFoundException {

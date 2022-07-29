@@ -65,10 +65,13 @@ public class UserInfo implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         Set<GrantedAuthority> roles = new HashSet<>();
+
         for (String role : auth.split(",")) {
             roles.add(new SimpleGrantedAuthority(role));
         }
+
         return roles;
     }
 

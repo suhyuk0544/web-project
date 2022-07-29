@@ -30,7 +30,7 @@ public class Post {
     @CreationTimestamp
     private Date createTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private UserInfo userInfo;
 

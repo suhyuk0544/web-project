@@ -9,10 +9,12 @@ import com.example.webproject.UserHandle.UserDaoService.UserService;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -25,19 +27,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-@org.springframework.stereotype.Controller
+@Controller
 public class WebController {
+    @Autowired
     private final ListService listService;
 
+    @Autowired
     private final UserService userService;
 
     @GetMapping("/main")
-    public String page(@PageableDefault(size = 15,sort = "id",direction = Sort.Direction.DESC) Pageable pageable, Model model){
+    public String page(@PageableDefault(size = 15,sort = "id",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpServletRequest request){
+
+        UserInfo user = (UserInfo)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String name = user.getName();
+
+        HttpSession session = request.getSession();
 
         Page<Post> postPage = listService.postPage(pageable);
+
+        session.setAttribute("loginUser",name);
 
         model.addAttribute("postList",postPage);
 
@@ -77,19 +90,19 @@ public class WebController {
 
     }
 
-    @GetMapping("/main/**")
-    public String LoadLoginUserName(HttpServletRequest request){
-
-        UserInfo user = (UserInfo)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        String name = user.getName();
-
-        HttpSession session = request.getSession();
-
-        session.setAttribute("loginUser",name);
-
-        return "form/index";
-    }
+//    @GetMapping("/main/**")
+//    public String LoadLoginUserName(HttpServletRequest request){
+//
+//        UserInfo user = (UserInfo)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        String name = user.getName();
+//
+//        HttpSession session = request.getSession();
+//
+//        session.setAttribute("loginUser",name);
+//
+//        return "form/index";
+//    }
 
     @GetMapping("/main/{id}")
     public String detail(@PathVariable int id,Model model){
