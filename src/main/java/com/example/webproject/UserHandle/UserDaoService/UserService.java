@@ -75,7 +75,7 @@ public class UserService implements UserDetailsService {
             userRepository.save(UserInfo.builder()
                     .name(infoDto.getName())
                     .auth(infoDto.getAuth())
-                    .joindate(infoDto.getJoindate())
+                    .JoinDate(infoDto.getJoinDate())
                     .password(infoDto.getPassword()).build());
 
         } else{

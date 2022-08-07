@@ -42,15 +42,19 @@ public class WebController {
     @GetMapping("/main")
     public String page(@PageableDefault(size = 15,sort = "id",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpServletRequest request){
 
-        UserInfo user = (UserInfo)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        String name = user.getName();
-
         HttpSession session = request.getSession();
 
-        Page<Post> postPage = listService.postPage(pageable);
+        String UserName = (String) session.getAttribute("loginUser");
 
-        session.setAttribute("loginUser",name);
+        if (UserName == null) {
+            UserInfo user = (UserInfo)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            String name = user.getName();
+
+            session.setAttribute("loginUser",name);
+        }
+
+        Page<Post> postPage = listService.postPage(pageable);
 
         model.addAttribute("postList",postPage);
 
