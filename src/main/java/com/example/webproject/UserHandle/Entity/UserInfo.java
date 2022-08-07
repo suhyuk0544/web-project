@@ -27,7 +27,7 @@ public class UserInfo implements UserDetails {
     @Column
     @CreationTimestamp
     @JsonIgnore
-    private Date joindate;
+    private Date JoinDate;
 
 
     @Column
@@ -40,13 +40,13 @@ public class UserInfo implements UserDetails {
     private List<Post> posts = new ArrayList<>();
 
     @Builder
-    public UserInfo(String name, String password,Date joindate ,String auth) {
+    public UserInfo(String name, String password, Date JoinDate, String auth) {
 
         this.name = name;
 
         this.password = password;
 
-        this.joindate = joindate;
+        this.JoinDate = JoinDate;
 
         this.auth = auth;
 
@@ -57,7 +57,7 @@ public class UserInfo implements UserDetails {
         return "UserInfo{" +
                 "name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", joindate=" + joindate +
+                ", JoinDate=" + JoinDate +
                 ", auth='" + auth + '\'' +
                 ", posts=" + posts +
                 '}';

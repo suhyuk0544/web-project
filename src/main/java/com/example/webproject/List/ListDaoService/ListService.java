@@ -6,6 +6,7 @@ import com.example.webproject.List.ListRepository;
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,14 +17,8 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ListService {
-
-    private final ListRepository listRepository;
-
-    public ListService(ListRepository listRepository) {
-
-        this.listRepository = listRepository;
-
-    }
+    @Autowired
+    private ListRepository listRepository;
 
     public Page<Post> postPage(Pageable pageable){
 
