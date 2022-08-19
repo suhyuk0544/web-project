@@ -12,10 +12,10 @@ import java.util.*;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@AllArgsConstructor
 @Entity
-@Table
-public class UserInfo implements UserDetails {
+public class UserInfo {
 
     @Id
     @Column(nullable = false, unique = true)
@@ -30,17 +30,24 @@ public class UserInfo implements UserDetails {
     private Date JoinDate;
 
 
-    @Column
+    @Column(nullable = false)
     @JsonIgnore
-    private String auth;
+    @Enumerated(EnumType.STRING)
+    private Auth auth;
 
     @OneToMany(mappedBy = "userInfo")
     @JsonIgnore
     @Nullable
     private List<Post> posts = new ArrayList<>();
 
-    @Builder
-    public UserInfo(String name, String password, Date JoinDate, String auth) {
+    private String email;
+
+    private String provider;
+
+    private String providerId;
+
+    @Builder(builderClassName = "UserDetailRegister", builderMethodName = "userDetailRegister")
+    public UserInfo(String name, String password, Date JoinDate, Auth auth) {
 
         this.name = name;
 
@@ -49,7 +56,28 @@ public class UserInfo implements UserDetails {
         this.JoinDate = JoinDate;
 
         this.auth = auth;
+    }
 
+    @Builder(builderClassName = "OAuth2Register", builderMethodName = "oauth2Register")
+    public UserInfo(String name, String password, String email,Auth auth) {
+
+        this.name = name;
+
+        this.password = password;
+
+        this.email = email;
+
+        this.auth = auth;
+    }
+
+    public UserInfo update(String name){
+        this.name = name;
+
+        return this;
+    }
+
+    public String getRoleKey(){
+        return this.auth.getKey();
     }
 
     @Override
@@ -62,57 +90,6 @@ public class UserInfo implements UserDetails {
                 ", posts=" + posts +
                 '}';
     }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Set<GrantedAuthority> roles = new HashSet<>();
-
-        for (String role : auth.split(",")) {
-            roles.add(new SimpleGrantedAuthority(role));
-        }
-
-        return roles;
-    }
-
-    @Override
-    public String getUsername() {
-        return name;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-
 
 }
 

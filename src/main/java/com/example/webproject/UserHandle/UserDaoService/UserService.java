@@ -1,10 +1,13 @@
 package com.example.webproject.UserHandle.UserDaoService;
 import com.example.webproject.UserHandle.DTO.UserInfoDto;
+import com.example.webproject.UserHandle.Entity.Auth;
+import com.example.webproject.UserHandle.Entity.PrincipalDetails;
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.example.webproject.UserHandle.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -47,17 +50,19 @@ public class UserService implements UserDetailsService {
 //    }
     public UserInfo FindUser(String name) throws UsernameNotFoundException{
 
-        return userRepository.findByname(name)
+        return userRepository.findByName(name)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
     }
 
     @Override
-    public UserInfo loadUserByUsername(String name) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 
         log.info("login {} ",name);
 
-        return userRepository.findByname(name)
+        UserInfo userInfo = userRepository.findByName(name)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
+
+        return new PrincipalDetails(userInfo);
     }
 
     public void save(UserInfoDto infoDto) {
@@ -66,18 +71,17 @@ public class UserService implements UserDetailsService {
 
         infoDto.setPassword(encoder.encode(infoDto.getPassword()));
 
-        Optional<UserInfo> userInfo = userRepository.findByname(infoDto.getName());
+        Optional<UserInfo> userInfo = userRepository.findByName(infoDto.getName());
 
         if (userInfo.isEmpty()){
 
             log.info("sign up : {}",infoDto);
 
-            userRepository.save(UserInfo.builder()
+            userRepository.save(UserInfo.userDetailRegister()
                     .name(infoDto.getName())
-                    .auth(infoDto.getAuth())
+                    .auth(Auth.USER)
                     .JoinDate(infoDto.getJoinDate())
                     .password(infoDto.getPassword()).build());
-
         } else{
 
             throw new NullPointerException();

@@ -1,6 +1,7 @@
 package com.example.webproject.UserHandle.DTO;
 
 
+import com.example.webproject.UserHandle.Entity.UserInfo;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -19,11 +20,13 @@ public class UserInfoDto implements Serializable {
 
     private String auth;
 
-    public String getAuth(){
+    private String email;
 
-        auth = "ROLE_USER";
+    public UserInfoDto(UserInfo userInfo){
 
-        return auth;
+        this.name = userInfo.getName();
+
+        this.email = userInfo.getEmail();
     }
 
     @Override

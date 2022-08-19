@@ -43,8 +43,6 @@ class WebProjectApplicationTests {
         post.setTitle("하하");
         post.setContent("하하");
 
-        userInfo.add(post);
-
         listRepository.save(post);
     }
 

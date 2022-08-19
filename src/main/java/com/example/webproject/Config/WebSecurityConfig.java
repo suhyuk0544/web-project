@@ -1,5 +1,6 @@
 package com.example.webproject.Config;
 
+import com.example.webproject.UserHandle.UserDaoService.CustomOAuth2UserService;
 import com.example.webproject.UserHandle.UserDaoService.UserService;
 import lombok.RequiredArgsConstructor;
 import org.h2.tools.Server;
@@ -21,6 +22,8 @@ import java.sql.SQLException;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
+
+    private final CustomOAuth2UserService Oauth2UserService;
 
     @Override
     public void configure(WebSecurity web) {
@@ -51,6 +54,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                 .and()
                 .csrf().ignoringAntMatchers("/main/**","/delete/**")
+                .and()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(Oauth2UserService)
         ;
     }
 
