@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 public class OAuthAttributes {
 
-    private final Map<String, Object> attributes; // OAuth2 반환하는 유저 정보 Map
+    private final Map<String, Object> attributes;
     private final String nameAttributeKey;
     private final String name;
     private final String email;
