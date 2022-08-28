@@ -50,6 +50,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             log.info("save = {}",user);
         }
 
+
         httpSession.setAttribute("loginUser",user.getName());
 
         return new PrincipalDetails(user,oAuth2User);
