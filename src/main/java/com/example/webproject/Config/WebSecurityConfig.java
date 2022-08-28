@@ -36,8 +36,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/login", "/signup", "/user").permitAll()
-                .antMatchers("/main","/savePost","/formpost").hasRole("USER")
-//                .antMatchers("/").hasRole("ADMIN")
+                .antMatchers("/main/**","/savePost","/formpost").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+//                .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -47,17 +47,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/main")
                 .failureForwardUrl("/login")
                 .and()
+                .csrf().ignoringAntMatchers("/main/**","/delete/**")
+                .and()
                 .logout()
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
                 .and()
                 .rememberMe()
                 .and()
-                .csrf().ignoringAntMatchers("/main/**","/delete/**")
-                .and()
                 .oauth2Login()
+                .loginPage("/login")
+                .defaultSuccessUrl("/main")
+                .failureUrl("/login")
                 .userInfoEndpoint()
                 .userService(Oauth2UserService)
+
+
         ;
     }
 

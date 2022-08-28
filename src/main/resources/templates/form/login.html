@@ -29,6 +29,7 @@
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <div class="submit-wrap">
                         <input type="submit" value="Sign in" class="submit">
+                        <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver Login</a>
                         <a href="/signup" class="more">sign up</a>
                     </div>
                 </form>
@@ -41,4 +42,3 @@
 
 </body>
 </html>
-

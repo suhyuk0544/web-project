@@ -1,24 +1,26 @@
 package com.example.webproject.UserHandle.UserDaoService;
 
-import com.example.webproject.UserHandle.Entity.Auth;
-import com.example.webproject.UserHandle.Entity.UserInfo;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
 import java.util.Map;
 
 @Getter
 public class OAuthAttributes {
 
-    private final Map<String, Object> attributes; // OAuth2 반환하는 유저 정보 Map
+    private final Map<String, Object> attributes;
     private final String nameAttributeKey;
     private final String name;
     private final String email;
+    private final String registrationId;
 
     @Builder
-    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email) {
+    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email,String registrationId) {
 
         this.attributes = attributes;
+
+        this.registrationId = registrationId;
 
         this.nameAttributeKey = nameAttributeKey;
 
@@ -27,44 +29,22 @@ public class OAuthAttributes {
         this.email = email;
     }
 
-    public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes){
+    public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) throws OAuth2AuthenticationException{
 
-        if("naver".equals(registrationId)){
-            return ofNaver("id", attributes);
-        }
+        return ofNaver("id", attributes,registrationId);
 
-        return ofGoogle(userNameAttributeName, attributes);
     }
 
-    private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
+    private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes,String registrationId) {
 
-        return OAuthAttributes.builder()
-                .name((String) attributes.get("name"))
-                .email((String) attributes.get("email"))
-                .attributes(attributes)
-                .nameAttributeKey(userNameAttributeName)
-                .build();
-    }
-
-    private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
-        // JSON형태이기 떄문에 Map을 통해서 데이터를 가져온다.
         Map<String, Object> response = (Map<String, Object>)attributes.get("response");
 
         return OAuthAttributes.builder()
                 .name((String) response.get("name"))
                 .email((String) response.get("email"))
                 .attributes(response)
+                .registrationId(registrationId)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
-
-
-    public UserInfo toEntity(){
-        return UserInfo.oauth2Register()
-                .name(name)
-                .email(email)
-                .auth(Auth.USER)
-                .build();
-    }
-
 }

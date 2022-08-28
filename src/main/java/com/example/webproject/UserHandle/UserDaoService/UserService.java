@@ -57,15 +57,13 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 
-        log.info("login {} ",name);
-
         UserInfo userInfo = userRepository.findByName(name)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
 
         return new PrincipalDetails(userInfo);
     }
 
-    public void save(UserInfoDto infoDto) {
+    public UserInfo save(UserInfoDto infoDto) {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -77,11 +75,12 @@ public class UserService implements UserDetailsService {
 
             log.info("sign up : {}",infoDto);
 
-            userRepository.save(UserInfo.userDetailRegister()
-                    .name(infoDto.getName())
-                    .auth(Auth.USER)
-                    .JoinDate(infoDto.getJoinDate())
-                    .password(infoDto.getPassword()).build());
+            return userRepository.save(UserInfo.userDetailRegister()
+                        .name(infoDto.getName())
+                        .auth(Auth.ROLE_USER)
+                        .JoinDate(infoDto.getJoinDate())
+                        .password(infoDto.getPassword()).build());
+
         } else{
 
             throw new NullPointerException();

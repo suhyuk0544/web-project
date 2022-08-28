@@ -1,5 +1,7 @@
 package com.example.webproject.List.Entity;
 
+import com.example.webproject.UserHandle.Entity.Auth;
+import com.example.webproject.UserHandle.Entity.PrincipalDetails;
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -32,8 +34,8 @@ public class Post {
     @JsonIgnore
     private UserInfo userInfo;
 
-    @Builder
-    public Post(String title,String content,Date createTime,UserInfo userInfo){
+    @Builder(builderClassName = "UserRegister", builderMethodName = "userRegister")
+    public Post(String title, String content, Date createTime,UserInfo userInfo){
 
         this.title = title;
 

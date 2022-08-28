@@ -17,19 +17,17 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     private final UserInfo user;
     private Map<String, Object> attributes;
 
+    private OAuth2User oAuth2User;
+
     public PrincipalDetails(UserInfo user) {
         this.user = user;
     }
 
-    public PrincipalDetails(UserInfo user, Map<String, Object> attributes) {
+    public PrincipalDetails(UserInfo user,OAuth2User oAuth2User) {
         this.user = user;
-        this.attributes = attributes;
+        this.oAuth2User = oAuth2User;
     }
 
-    /**
-     * UserDetails 구현
-     * 해당 유저의 권한목록 리턴
-     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
@@ -85,8 +83,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getName() {
-        String sub = attributes.get("sub").toString();
-        return sub;
+        return attributes.get("sub").toString();
     }
 
 }

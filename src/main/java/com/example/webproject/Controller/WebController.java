@@ -4,6 +4,7 @@ import com.example.webproject.List.Entity.Post;
 import com.example.webproject.List.ListDTO.PostDto;
 import com.example.webproject.List.ListDaoService.ListService;
 import com.example.webproject.UserHandle.DTO.UserInfoDto;
+import com.example.webproject.UserHandle.Entity.PrincipalDetails;
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.example.webproject.UserHandle.UserDaoService.UserService;
 import javassist.NotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,20 +38,22 @@ import java.util.Optional;
 public class WebController {
 
     @Autowired
-    private final ListService listService;
+    private ListService listService;
 
     @Autowired
-    private final UserService userService;
+    private UserService userService;
 
     @GetMapping("/main")
-    public String page(@PageableDefault(size = 15,sort = "id",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpServletRequest request){
+    public String page(@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpServletRequest request){
 
         HttpSession session = request.getSession();
 
         String UserName = (String) session.getAttribute("loginUser");
 
         if (UserName == null) {
-            UserInfo user = (UserInfo)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            PrincipalDetails principalDetails = (PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            UserInfo user = principalDetails.getUser();
 
             String name = user.getName();
 
@@ -83,17 +88,23 @@ public class WebController {
     }
 
     @PostMapping("/main/savePost")
-    public String save(PostDto postDto){
+    public String save(PostDto postDto,@AuthenticationPrincipal PrincipalDetails principalDetails){
 
-        UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        listService.save(postDto,user);
+        listService.save(postDto,principalDetails);
 
         log.info("Post = {}", postDto);
 
         return "redirect:/main";
 
     }
+
+//    @GetMapping("/user")
+//    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails){
+//
+//        log.info("principalDetails = {}", principalDetails);
+//
+//        return "user";
+//    }
 
 //    @GetMapping("/main/**")
 //    public String LoadLoginUserName(HttpServletRequest request){
@@ -136,9 +147,9 @@ public class WebController {
     @PostMapping("/user")
     public String signup(UserInfoDto infoDto) {
 
-        userService.save(infoDto);
+        UserInfo user = userService.save(infoDto);
 
-        log.info("save: {}",infoDto);
+        log.info("save: {}",user);
 
         return "redirect:form/login";
     }
@@ -181,7 +192,7 @@ public class WebController {
     @GetMapping("/delete/form")
     public String deleteform(){
 
-        return "view";
+        return "/view";
 
     }
     @GetMapping("/")

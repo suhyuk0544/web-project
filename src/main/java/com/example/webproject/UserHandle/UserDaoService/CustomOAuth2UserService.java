@@ -1,10 +1,13 @@
 package com.example.webproject.UserHandle.UserDaoService;
 
 
-import com.example.webproject.UserHandle.DTO.UserInfoDto;
+import com.example.webproject.UserHandle.DTO.Session;
+import com.example.webproject.UserHandle.Entity.Auth;
+import com.example.webproject.UserHandle.Entity.PrincipalDetails;
 import com.example.webproject.UserHandle.Entity.UserInfo;
 import com.example.webproject.UserHandle.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,10 +19,10 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
@@ -39,23 +42,27 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String userAttributeName = oAuth2UserRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userAttributeName, oAuth2User.getAttributes());
-        UserInfo user = saveOrUpdate(attributes);
-        httpSession.setAttribute("user", new UserInfoDto(user)); // SessionUser (직렬화된 dto 클래스 사용)
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
-                attributes.getAttributes(),
-                attributes.getNameAttributeKey());
-    }
-
-    private UserInfo saveOrUpdate(OAuthAttributes attributes){
-
-        UserInfo user = userRepository.findByEmail(attributes.getEmail());
+        UserInfo user = userRepository.findByname(attributes.getEmail());
 
         if (user == null){
-
+            user = save(attributes);
+            log.info("save = {}",user);
         }
 
-        return userRepository.save(user);
+        httpSession.setAttribute("loginUser",user.getName());
+
+        return new PrincipalDetails(user,oAuth2User);
+    }
+
+    private UserInfo save(OAuthAttributes attributes){
+
+
+        return userRepository.save(UserInfo.oauth2Register()
+                    .name(attributes.getEmail())
+                    .auth(Auth.ROLE_USER)
+                    .provider(attributes.getRegistrationId())
+                    .build());
     }
 
 }

@@ -21,7 +21,7 @@ public class UserInfo {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @Column
@@ -40,11 +40,7 @@ public class UserInfo {
     @Nullable
     private List<Post> posts = new ArrayList<>();
 
-    private String email;
-
     private String provider;
-
-    private String providerId;
 
     @Builder(builderClassName = "UserDetailRegister", builderMethodName = "userDetailRegister")
     public UserInfo(String name, String password, Date JoinDate, Auth auth) {
@@ -59,35 +55,21 @@ public class UserInfo {
     }
 
     @Builder(builderClassName = "OAuth2Register", builderMethodName = "oauth2Register")
-    public UserInfo(String name, String password, String email,Auth auth) {
+    public UserInfo(String name, String password,Auth auth,String provider) {
 
         this.name = name;
-
-        this.password = password;
-
-        this.email = email;
 
         this.auth = auth;
-    }
 
-    public UserInfo update(String name){
-        this.name = name;
-
-        return this;
-    }
-
-    public String getRoleKey(){
-        return this.auth.getKey();
+        this.provider = provider;
     }
 
     @Override
     public String toString() {
         return "UserInfo{" +
                 "name='" + name + '\'' +
-                ", password='" + password + '\'' +
                 ", JoinDate=" + JoinDate +
                 ", auth='" + auth + '\'' +
-                ", posts=" + posts +
                 '}';
     }
 

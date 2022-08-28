@@ -7,6 +7,9 @@ spring:
     driver-class-name: org.h2.Driver
     generate-unique-name: false
 
+  profiles:
+    include: oauth
+
   mustache:
     expose-session-attributes: true
 
