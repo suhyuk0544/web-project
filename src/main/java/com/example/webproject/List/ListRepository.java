@@ -35,8 +35,8 @@ public interface ListRepository extends JpaRepository<Post,String> {
 
     @Transactional
     @Modifying
-    @Query("delete from Post p where p.title = ?1")
-    void deleteByTitle(String Title);
+    @Query("delete from Post p where p.id = ?1")
+    void deleteById(int Id);
 
     @Override
     @Query("select p from Post p")

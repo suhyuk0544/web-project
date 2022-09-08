@@ -77,15 +77,15 @@ public class ListService {
 
     }
 
-    public List<Post> postPage(PostDto postDto,Pageable pageable){
+    public List<Post> postPage(String title,Pageable pageable){
 
-        return listRepository.findByTitleContainingOrderById(postDto.getTitle(),pageable);
+        return listRepository.findByTitleContainingOrderById(title,pageable);
 
     }
 
-    public void delete(PostDto postDto){
+    public void delete(int id){
 
-        listRepository.deleteByTitle(postDto.getTitle());
+        listRepository.deleteById(id);
 
     }
 

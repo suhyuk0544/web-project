@@ -73,8 +73,6 @@ public class UserService implements UserDetailsService {
 
         if (userInfo.isEmpty()){
 
-            log.info("sign up : {}",infoDto);
-
             return userRepository.save(UserInfo.userDetailRegister()
                         .name(infoDto.getName())
                         .auth(Auth.ROLE_USER)

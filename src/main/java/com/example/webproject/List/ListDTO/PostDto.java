@@ -1,5 +1,6 @@
 package com.example.webproject.List.ListDTO;
 
+import com.example.webproject.UserHandle.Entity.UserInfo;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,8 @@ public class PostDto implements Serializable {
 
     @CreationTimestamp
     private Date CreateTime;
+
+    private UserInfo userInfo;
 
     @Override
     public String toString() {

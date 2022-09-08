@@ -15,21 +15,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -43,14 +44,16 @@ public class WebController {
     @Autowired
     private UserService userService;
 
+
     @GetMapping("/main")
-    public String page(@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpServletRequest request){
+    public String MainPage(@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpServletRequest request){
 
         HttpSession session = request.getSession();
 
         String UserName = (String) session.getAttribute("loginUser");
 
         if (UserName == null) {
+
             PrincipalDetails principalDetails = (PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             UserInfo user = principalDetails.getUser();
@@ -155,9 +158,9 @@ public class WebController {
     }
 
     @GetMapping("/main/search")
-    public String search(@PageableDefault(size = 20,sort = "id") Pageable pageable,PostDto postDto, Model model){
+    public String search(@PageableDefault(size = 20,sort = "id") Pageable pageable,@RequestParam String title,Model model){
 
-        List<Post> postList = listService.postPage(postDto,pageable);
+        List<Post> postList = listService.postPage(title,pageable);
 
         model.addAttribute("postList",postList);
 
@@ -179,12 +182,17 @@ public class WebController {
 
     }
 
-    @PostMapping("/delete")
-    public String delete(PostDto postDto) {
+    @GetMapping("/delete/{id}")
+    public String delete(@AuthenticationPrincipal PrincipalDetails principalDetails,@PathVariable int id) throws NotFoundException{
 
-        listService.delete(postDto);
+        Post post = listService.FindById(id);
 
-        log.info("title = {} delete",postDto.getTitle());
+        if (Objects.equals(post.getUserInfo().getName(),principalDetails.getUsername())) {
+
+            listService.delete(id);
+
+            log.info("Delete = {}", post);
+        }
 
         return "redirect:/main";
     }

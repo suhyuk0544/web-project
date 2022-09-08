@@ -33,6 +33,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
 
+
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 
         OAuth2User oAuth2User = delegate.loadUser(oAuth2UserRequest);
@@ -47,9 +48,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         if (user == null){
             user = save(attributes);
+
             log.info("save = {}",user);
+
         }
 
+        log.info("login = {}",user);
 
         httpSession.setAttribute("loginUser",user.getName());
 
