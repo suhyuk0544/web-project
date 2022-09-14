@@ -43,7 +43,7 @@ server:
 
   tomcat:
 
-    connection-timeout: 20000
+#    connection-timeout: 20000
 
     remoteip:
 

@@ -12,7 +12,7 @@
         <tbody>
         {{#postList}}
             <tr>
-                <th scope="row"><a href="/main/{{id}}">{{title}}</a></th>
+                <th scope="row"><a style="color: black" href="/main/post?id={{id}}" methods="get">{{title}}</a></th>
                 <td>{{userInfo.getName}}</td>
                 <td>{{createTime}}</td>
             </tr>

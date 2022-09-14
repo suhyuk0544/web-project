@@ -15,6 +15,7 @@ import java.util.Map;
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private final UserInfo user;
+
     private Map<String, Object> attributes;
 
     private OAuth2User oAuth2User;

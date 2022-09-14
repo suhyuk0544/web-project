@@ -60,6 +60,8 @@ public class UserService implements UserDetailsService {
         UserInfo userInfo = userRepository.findByName(name)
                 .orElseThrow(() -> new UsernameNotFoundException((name)));
 
+        log.info("login = {}",userInfo);
+
         return new PrincipalDetails(userInfo);
     }
 
