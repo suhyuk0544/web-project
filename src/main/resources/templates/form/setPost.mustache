@@ -14,7 +14,7 @@
     <div class="container-fluid" style="margin-top: 40px; ">
         {{#SetPost}}
         <form action="/main/{{id}}/setPost" method="post" enctype="multipart/form-data">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
             <div class="form-group wrap"><label for="">제목 </label>
                 <textarea class="form-control form-control-solid wrap" type="text" name="title" rows="1" style="margin: 10px">{{title}}</textarea>
             </div>

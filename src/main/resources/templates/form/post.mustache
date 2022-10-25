@@ -13,7 +13,7 @@
 <div class="container">
     <div class="container-fluid" style="margin-top: 40px; ">
         <form action="/main/savePost" method="post" enctype="multipart/form-data">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
             <div class="form-group wrap" ><label for="">제목 </label>
                 <textarea class="form-control form-control-solid wrap" type="text" name="title" rows="1" required="required" style="margin: 10px" placeholder="title"></textarea>
             </div>
