@@ -1,31 +1,55 @@
 package com.example.webproject.Controller;
 
+import com.example.webproject.Config.WebSecurityConfig;
 import com.example.webproject.List.Entity.Post;
 import com.example.webproject.List.ListDTO.PostDto;
 import com.example.webproject.List.ListDaoService.ListService;
 import com.example.webproject.UserHandle.DTO.UserInfoDto;
 import com.example.webproject.UserHandle.Entity.PrincipalDetails;
 import com.example.webproject.UserHandle.Entity.UserInfo;
+import com.example.webproject.UserHandle.UserDaoService.CustomOAuth2UserService;
 import com.example.webproject.UserHandle.UserDaoService.UserService;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ClientRegistrations;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -39,24 +63,17 @@ public class WebController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
+    private final InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository;
 
     @GetMapping("/main")
-    public String MainPage(@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpServletRequest request){
+    public String MainPage(@AuthenticationPrincipal PrincipalDetails principalDetails,@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpSession session){
 
-        HttpSession session = request.getSession();
+        UserInfo userInfo = principalDetails.getUser();
 
-        String UserName = (String) session.getAttribute("loginUser");
-
-        if (UserName == null) {
-
-            PrincipalDetails principalDetails = (PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-            UserInfo user = principalDetails.getUser();
-
-            String name = user.getName();
-
-            session.setAttribute("loginUser",name);
-        }
+        session.setAttribute("loginUser",userInfo);
 
         Page<Post> postPage = listService.postPage(pageable);
 
@@ -96,6 +113,60 @@ public class WebController {
 
     }
 
+    @GetMapping("/naver/oauth2")
+    public String Authorize(){
+
+        SecureRandom random = new SecureRandom();
+        String state = new BigInteger(130, random).toString(32);
+
+        String url = "https://nid.naver.com" +
+                "/oauth2.0/authorize?" +
+                "client_id=NQj0cmSwEsYbB8ajFwfe" +
+                "&response_type=code" +
+                "&state=" + state +
+                "&redirect_uri=http://localhost:8080/oauth2/code/naver";
+
+        log.info(url);
+
+        return "redirect:" + url;
+    }
+
+    @RequestMapping(value = "/oauth2/code/naver",method = {RequestMethod.GET,RequestMethod.POST},produces = "application/json")
+    public String Oauth2Login (@RequestParam(value = "code") String code, @RequestParam(value = "state") String state){
+
+        log.info("callback");
+
+        ClientRegistration clientRegistrations = inMemoryClientRegistrationRepository.findByRegistrationId("naver");
+
+        WebClient webclient = WebClient.builder()
+                .baseUrl("https://nid.naver.com")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+
+        JSONObject response = webclient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/oauth2.0/token")
+                        .queryParam("client_id",clientRegistrations.getClientId())
+                        .queryParam("client_secret",clientRegistrations.getClientSecret())
+                        .queryParam("grant_type", "authorization_code")
+                        .queryParam("state", state)
+                        .queryParam("code", code)
+                        .build())
+                .retrieve().bodyToMono(JSONObject.class)
+                .block();
+
+        OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, (String) Objects.requireNonNull(response).get("access_token"),null,null,null);
+
+        log.info("{}",response.get("expires_in"));
+
+        customOAuth2UserService.loadUser(new OAuth2UserRequest(clientRegistrations,accessToken,null));
+
+        return "redirect:/main";
+    }
+
+
+
 //    @GetMapping("/user")
 //    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails){
 //
@@ -119,7 +190,7 @@ public class WebController {
 //    }
 
     @GetMapping("/main/post")
-    public String detail(@RequestParam int id,Model model){
+    public String detail(@RequestParam(value = "id") int id,Model model){
         try {
             Post post = listService.FindById(id);
 
@@ -139,7 +210,8 @@ public class WebController {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
 
         log.info("logout");
-        return "redirect:form/login";
+
+        return "redirect:/login";
     }
 
     @PostMapping("/user")
@@ -149,7 +221,7 @@ public class WebController {
 
         log.info("save: {}",user);
 
-        return "redirect:form/login";
+        return "redirect:/login";
     }
 
     @GetMapping("/main/search")
@@ -162,20 +234,20 @@ public class WebController {
         return "form/index";
     }
 
-    @GetMapping("/find")
-    public Post view(PostDto postDto){
-        try {
-
-            return listService.LoadOneByTitle(postDto.getTitle());
-
-        } catch (NotFoundException e) {
-
-            e.printStackTrace();
-        }
-
-        return null;
-
-    }
+//    @GetMapping("/find")
+////    public Post view(@RequestParam(value = "title") String title){
+//        try {
+//
+//            return listService.LoadOneByTitle(title);
+//
+//        } catch (NotFoundException e) {
+//
+//            e.printStackTrace();
+//        }
+//
+//        return null;
+//
+//    }
 
     @GetMapping("/delete/{id}")
     public String delete(@AuthenticationPrincipal PrincipalDetails principalDetails,@PathVariable int id) throws NotFoundException{
@@ -212,9 +284,4 @@ public class WebController {
 
     }
 
-    @GetMapping("/form/login")
-    public String um(){
-
-        return "redirect:/main";
-    }
 }
