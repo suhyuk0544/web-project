@@ -10,32 +10,29 @@ import java.util.Map;
 public class OAuthAttributes {
 
     private final Map<String, Object> attributes;
-    private final String nameAttributeKey;
     private final String name;
     private final String email;
     private final String registrationId;
 
     @Builder
-    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email,String registrationId) {
+    public OAuthAttributes(Map<String, Object> attributes, String name, String email,String registrationId) {
 
         this.attributes = attributes;
 
         this.registrationId = registrationId;
-
-        this.nameAttributeKey = nameAttributeKey;
 
         this.name = name;
 
         this.email = email;
     }
 
-    public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) throws OAuth2AuthenticationException{
+    public static OAuthAttributes of(String registrationId,Map<String, Object> attributes) throws OAuth2AuthenticationException{
 
-        return ofNaver("id", attributes,registrationId);
+        return ofNaver(attributes,registrationId);
 
     }
 
-    private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes,String registrationId) {
+    private static OAuthAttributes ofNaver(Map<String, Object> attributes,String registrationId) {
 
         Map<String, Object> response = (Map<String, Object>)attributes.get("response");
 
@@ -44,7 +41,6 @@ public class OAuthAttributes {
                 .email((String) response.get("email"))
                 .attributes(response)
                 .registrationId(registrationId)
-                .nameAttributeKey(userNameAttributeName)
                 .build();
     }
 }
