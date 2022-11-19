@@ -10,6 +10,7 @@
 <!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">-->
 </head>
 <body style="background: linear-gradient(to right, #a8edea, #fed6e3)">
+
 <section class="container">
 
     <article class="half">
@@ -20,21 +21,20 @@
         <div class="content">
             <div class="signin-cont cont">
                 <form th:action="@{/login}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <input type="text" name="name" id="email" class="inpt" required="required" placeholder="Your email">
                     <label for="email">Your name</label>
                     <input type="password" name="password" id="password" class="inpt" required="required" placeholder="Your password">
                     <label for="password">Your password</label>
                     <input type="checkbox" id="remember" class="checkbox" checked>
                     <label for="remember">Remember me</label>
-<!--                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
                     <div class="submit-wrap">
                         <input type="submit" value="Sign in" class="submit">
-                        <a href="/naver/oauth2" class="btn btn-secondary active" role="button">Naver Login</a>
+                        <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver login</a>
                         <a href="/signup" class="more">sign up</a>
                     </div>
                 </form>
             </div>
-
         </div>
     </article>
     <div class="half bg"></div>

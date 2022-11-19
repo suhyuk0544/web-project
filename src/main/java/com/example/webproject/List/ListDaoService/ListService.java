@@ -1,35 +1,46 @@
 package com.example.webproject.List.ListDaoService;
 
 import com.example.webproject.List.Entity.Post;
+import com.example.webproject.List.Entity.Question;
 import com.example.webproject.List.ListDTO.PostDto;
+import com.example.webproject.List.ListDTO.QuestionDto;
 import com.example.webproject.List.ListRepository;
+import com.example.webproject.List.QuestionRepository;
 import com.example.webproject.UserHandle.Entity.PrincipalDetails;
 import com.example.webproject.UserHandle.Entity.UserInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javassist.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class ListService {
-    @Autowired
-    private ListRepository listRepository;
+
+    private final ListRepository listRepository;
+
+    private final QuestionRepository questionRepository;
 
     public Page<Post> postPage(Pageable pageable){
 
         return listRepository.findAll(pageable);
+    }
 
+    public void SaveQuestion(Post post, QuestionDto questionDto, UserInfo userInfo){
+
+        log.info(questionDto.getQuestionContent());
+
+        questionRepository.save(Question.builder()
+                .username(userInfo.getName())
+                .questionContent(questionDto.getQuestionContent())
+                .date(questionDto.getDate())
+                .post(post)
+                .build());
     }
 
     public Post setPost(PostDto postDto,int id) throws NotFoundException {
@@ -44,10 +55,15 @@ public class ListService {
         return post;
     }
 
-    public Post FindById(int id) throws NotFoundException {
+    public Post FindById(int id) throws NotFoundException{
 
         return listRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.valueOf(id)));
+    }
+
+    public Page<Question> questions(Post post,Pageable pageable) throws NotFoundException{
+
+        return questionRepository.findQuestionsByPost(post,pageable);
     }
 
     public Post LoadOneByTitle(String title) throws NotFoundException{

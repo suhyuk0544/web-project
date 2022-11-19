@@ -1,6 +1,6 @@
 {{>layouts/header}}
 <div class="container my-3"  xmlns:th="https://www.thymeleaf.org">
-
+<div>
     {{#Post}}
     <h2 class="border-bottom py-2">{{title}}</h2>
     <div class="card my-3">
@@ -13,10 +13,27 @@
             </div>
         </div>
     </div>
-    <a href="/main/{{id}}/setPost" class="btn btn-primary">수정</a>
+    <table class="table">
+        <tbody>
+        {{#QuestionList}}
+            <tr>
+                <th scope="row"><a style="color: black" href="/main/Profile?name={{username}}" methods="get">{{username}}</a></th>
+                <td><div class="card-text" style="white-space: pre-line;">{{content}}</div></td>
+                <td>{{date}}</td>
+            </tr>
+        {{/QuestionList}}
+        </tbody>
+    </table>
+    <div>
+        <form class="card my-3" method="post" action="/main/question">
+            <textarea class="form-control" rows="3" placeholder="적어!" name="QuestionContent"></textarea>
 
-    <a href="/delete/{{id}}" class="btn btn-primary">삭제 </a>
-
+            <input type="submit" value="답변등록" class="btn btn-primary">
+        </form>
+    </div>
+        <a href="/main/{{id}}/setPost" class="btn btn-primary">수정</a>
+        <a href="/delete/{{id}}" class="btn btn-primary">삭제 </a>
+    </div>
     {{/Post}}
 </div>
 

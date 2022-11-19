@@ -23,7 +23,7 @@
                     </li>
                     {{#loginUser}}
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/main/Profile/{{loginUser}}">{{loginUser}}</a>
+                        <a class="nav-link active" aria-current="page" href="/main/Profile?name={{loginUser.getName}}">{{loginUser}}</a>
                     </li>
                     {{/loginUser}}
                     <li class="nav-item">
