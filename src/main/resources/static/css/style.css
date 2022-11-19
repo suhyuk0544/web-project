@@ -9,6 +9,9 @@
 
 .naver{
     background-image: url("naver.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 150px 40px;
 }
 
 body {
@@ -33,8 +36,6 @@ body .container .half {
     padding: 58px 40px 0;
 }
 body .container .half.bg {
-
-
     background-image: url("Screenshot_20220320-140357_Gallery.jpg");
     background-repeat: no-repeat;
     background-position: center;
