@@ -6,6 +6,9 @@ spring:
     driver-class-name: org.h2.Driver
     generate-unique-name: false
 
+#  main:
+#    web-application-type: none
+
   profiles:
     include: oauth
 
@@ -14,6 +17,8 @@ spring:
 
   h2.console:
     enabled: true
+    settings:
+      web-allow-others: true
   jpa:
     hibernate:
       ddl-auto: create

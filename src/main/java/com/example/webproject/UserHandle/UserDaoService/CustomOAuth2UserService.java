@@ -35,27 +35,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
 
+        Assert.notNull(oAuth2UserRequest, "oAuthUserRequest cannot be null");
+
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 
         OAuth2User oAuth2User = delegate.loadUser(oAuth2UserRequest);
 
-        JSONObject response;
+        String userAttributeName = oAuth2UserRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-        switch (oAuth2UserRequest.getClientRegistration().getRegistrationId()){
-            case "naver" :
-                response = getNaverUserInfo(oAuth2UserRequest.getAccessToken().getTokenValue());
-                break;
-//            case "kakao" :
-//                response = getKakaoUserInfo(oAuth2UserRequest.getAccessToken().getTokenValue());
-//                break;
-
-            default:
-                throw new IllegalStateException("Unexpected value: " + oAuth2UserRequest.getClientRegistration().getRegistrationId());
-        }
-
-        Assert.notNull(response,"response can not be Null");
-
-        OAuthAttributes attributes = OAuthAttributes.of("Naver",response);
+        OAuthAttributes attributes = OAuthAttributes.of(userAttributeName, oAuth2User.getAttributes());
 
         UserInfo user = userRepository.findByname(attributes.getEmail());
 
@@ -63,17 +51,54 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
             user = save(attributes);
 
-            log.info("Save Oauth User = {}",user);
-
+            log.info("save = {}",user);
         }
-//        DefaultOAuth2User oAuth2User = new DefaultOAuth2User(  Collections.singleton(new SimpleGrantedAuthority(user.getAuth())),)
 
-        log.info("Login Oauth User = {}",user);
+        log.info("login = {}",user);
 
-        httpSession.setAttribute("loginUser",user.getName());
+        httpSession.setAttribute("loginUser",user);
 
         return new PrincipalDetails(user,oAuth2User);
     }
+//    @Override
+//    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
+//
+//        JSONObject response;
+//
+//        switch (oAuth2UserRequest.getClientRegistration().getRegistrationId()){
+//            case "naver" :
+//                response = getNaverUserInfo(oAuth2UserRequest.getAccessToken().getTokenValue());
+//                break;
+////            case "kakao" :
+////                response = getKakaoUserInfo(oAuth2UserRequest.getAccessToken().getTokenValue());
+////                break;
+//
+//            default:
+//                throw new IllegalStateException("Unexpected value: " + oAuth2UserRequest.getClientRegistration().getRegistrationId());
+//        }
+//
+//        Assert.notNull(response,"response can not be Null");
+//
+//        OAuthAttributes attributes = OAuthAttributes.of("Naver",response);
+//
+//        UserInfo user = userRepository.findByname(attributes.getEmail());
+//
+//        if (user == null){
+//
+//            user = save(attributes);
+//
+//            log.info("Save Oauth User = {}",user);
+//
+//        }
+//
+//        log.info("Login Oauth User = {}",user);
+//
+//        userService.loadUserByUsername(user.getName());
+//
+//        httpSession.setAttribute("loginUser",user.getName());
+//
+//        return new PrincipalDetails(user);
+//    }
 
     private JSONObject getKakaoUserInfo(String tokenValue) {
         return new JSONObject();
@@ -94,15 +119,16 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .retrieve()
                 .bodyToMono(JSONObject.class)
                 .block();
+
     }
 
     private UserInfo save(OAuthAttributes attributes){
 
 
         return userRepository.save(UserInfo.oauth2Register()
-                    .name(attributes.getEmail())
-                    .auth(Auth.ROLE_USER)
-                    .provider(attributes.getRegistrationId())
-                    .build());
+                .name(attributes.getEmail())
+                .auth(Auth.ROLE_USER)
+                .provider(attributes.getRegistrationId())
+                .build());
     }
 }
