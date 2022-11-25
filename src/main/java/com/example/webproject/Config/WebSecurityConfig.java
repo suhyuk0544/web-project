@@ -35,17 +35,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**","/h2-console/**","https://openapi.naver.com/**","/oauth2/**");
+        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**","/h2-console/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-                .csrf()
-                    .disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/signup", "/user","https://openapi.naver.com/**","/naver/oauth2/**").permitAll()
+                .antMatchers("/login", "/signup", "/user","/oauth2/**","https://nid.naver.com/**").permitAll()
                 .antMatchers("/main/**","/savePost","/formpost").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 //                .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest()
@@ -58,21 +56,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .defaultSuccessUrl("/main")
                     .failureForwardUrl("/login")
                 .and()
-//                .csrf().ignoringAntMatchers("/main/**","/delete/**")
+                .csrf().ignoringAntMatchers("/main/**","/delete/**")
+                .and()
                 .logout()
                     .logoutSuccessUrl("/login")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .deleteCookies("JSESSIONID")
                 .and()
-                    .rememberMe()
-                .and()
                 .oauth2Login()
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/main")
-                    .failureUrl("/login")
-                    .userInfoEndpoint()
-                        .userService(Oauth2UserService)
+                .loginPage("/login")
+                .defaultSuccessUrl("/main")
+                .userInfoEndpoint()
+                    .userService(Oauth2UserService)
 
         ;
     }
