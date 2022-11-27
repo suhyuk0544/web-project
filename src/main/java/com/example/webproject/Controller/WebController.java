@@ -1,8 +1,10 @@
 package com.example.webproject.Controller;
 
-import com.example.webproject.Config.WebSecurityConfig;
+import com.example.webproject.Config.ApiKey;
 import com.example.webproject.List.Entity.Post;
+import com.example.webproject.List.Entity.Question;
 import com.example.webproject.List.ListDTO.PostDto;
+import com.example.webproject.List.ListDTO.QuestionDto;
 import com.example.webproject.List.ListDaoService.ListService;
 import com.example.webproject.UserHandle.DTO.UserInfoDto;
 import com.example.webproject.UserHandle.Entity.PrincipalDetails;
@@ -12,10 +14,7 @@ import com.example.webproject.UserHandle.UserDaoService.UserService;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,32 +23,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -57,29 +46,73 @@ import java.util.Objects;
 @Controller
 public class WebController {
 
-    @Autowired
-    private ListService listService;
+    private final ListService listService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     private final InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository;
 
+
     @GetMapping("/main")
-    public String MainPage(@AuthenticationPrincipal PrincipalDetails principalDetails,@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable, Model model,HttpSession session){
-
-        UserInfo userInfo = principalDetails.getUser();
-
-        session.setAttribute("loginUser",userInfo);
+    public String MainPage(@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable, Model model){
 
         Page<Post> postPage = listService.postPage(pageable);
 
         model.addAttribute("postList",postPage);
 
         return "form/index";
+    }
+
+    @GetMapping("/main/geoLocation")
+    public String GeoLocation(@AuthenticationPrincipal PrincipalDetails principalDetails,HttpServletRequest request){
+
+        UserInfo userInfo = principalDetails.getUser();
+
+        log.info(request.getRemoteAddr());
+
+
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl("https://geolocation.apigw.gov-ntruss.com/geolocation/v2/geoLocation")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader("x-ncp-apigw-timestamp",String.valueOf(System.currentTimeMillis()))
+                .defaultHeader("x-ncp-iam-access-key", ApiKey.AccessKey.getCode())
+                .defaultHeader("x-ncp-apigw-signature-v2",userService.makeSignature(String.valueOf(System.currentTimeMillis()),"GET","https://geolocation.apigw.gov-ntruss.com/geolocation/v2/geoLocation"))
+                .build();
+
+        JSONObject jsonObject = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("ip","222.101.226.135")
+                        .queryParam("responseFormatType","json")
+                        .build()
+                )
+                .retrieve()
+                .bodyToMono(JSONObject.class)
+                .block();
+
+        log.info((String) Objects.requireNonNull(jsonObject).get("r1") + jsonObject.get("r2") + jsonObject.get("r3"));
+
+        return "redirect:/main";
+    }
+
+    @GetMapping("/main/Profile")
+    public String Profile(@RequestParam(value = "name") String username,@PageableDefault(size = 15,sort = "createTime",direction = Sort.Direction.DESC) Pageable pageable,Model model){
+
+         Page<Post> posts = userService.FindUser(username,pageable);
+
+         model.addAttribute("userInfoPosts",posts);
+
+        return "form/UserInfo";
+    }
+
+    @PostMapping("/main/question/{id}")
+    public String SaveQuestion(QuestionDto questionDto,@PathVariable int id,@AuthenticationPrincipal PrincipalDetails principalDetails){
+
+        listService.SaveQuestion(id,questionDto,principalDetails.getUser());
+
+        return "redirect:/main/post?id=" + id;
     }
 
     @PostMapping("/main/{id}/setPost")
@@ -113,30 +146,32 @@ public class WebController {
 
     }
 
-    @GetMapping("/naver/oauth2")
-    public String Authorize(){
+    @GetMapping("/oauth2/{registrationId}")
+    public String Authorize(@PathVariable String registrationId){
 
         SecureRandom random = new SecureRandom();
         String state = new BigInteger(130, random).toString(32);
 
+        ClientRegistration clientRegistrations = inMemoryClientRegistrationRepository.findByRegistrationId(registrationId);
+
         String url = "https://nid.naver.com" +
                 "/oauth2.0/authorize?" +
-                "client_id=NQj0cmSwEsYbB8ajFwfe" +
+                "client_id=" + clientRegistrations.getClientId() +
                 "&response_type=code" +
                 "&state=" + state +
-                "&redirect_uri=http://localhost:8080/oauth2/code/naver";
+                "&redirect_uri=" + clientRegistrations.getRedirectUri();
 
         log.info(url);
 
         return "redirect:" + url;
     }
 
-    @RequestMapping(value = "/oauth2/code/naver",method = {RequestMethod.GET,RequestMethod.POST},produces = "application/json")
-    public String Oauth2Login (@RequestParam(value = "code") String code, @RequestParam(value = "state") String state){
+    @RequestMapping(value = "/oauth2/code/{registrationId}",method = {RequestMethod.GET,RequestMethod.POST},produces = "application/json")
+    public String Oauth2Login(@PathVariable String registrationId,@RequestParam(value = "code") String code, @RequestParam(value = "state") String state){
 
         log.info("callback");
 
-        ClientRegistration clientRegistrations = inMemoryClientRegistrationRepository.findByRegistrationId("naver");
+        ClientRegistration clientRegistrations = inMemoryClientRegistrationRepository.findByRegistrationId(registrationId);
 
         WebClient webclient = WebClient.builder()
                 .baseUrl("https://nid.naver.com")
@@ -153,12 +188,14 @@ public class WebController {
                         .queryParam("state", state)
                         .queryParam("code", code)
                         .build())
-                .retrieve().bodyToMono(JSONObject.class)
+                .retrieve()
+                .bodyToMono(JSONObject.class)
                 .block();
 
         OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, (String) Objects.requireNonNull(response).get("access_token"),null,null,null);
 
         log.info("{}",response.get("expires_in"));
+
 
         customOAuth2UserService.loadUser(new OAuth2UserRequest(clientRegistrations,accessToken,null));
 
@@ -190,15 +227,18 @@ public class WebController {
 //    }
 
     @GetMapping("/main/post")
-    public String detail(@RequestParam(value = "id") int id,Model model){
+    public String detail(@RequestParam(value = "id") int id, @PageableDefault(size = 500,sort = "date",direction = Sort.Direction.DESC) Pageable pageable, Model model){
         try {
             Post post = listService.FindById(id);
 
-            model.addAttribute("Post",post);
+            Page<Question> questions = listService.questions(post,pageable);
 
+
+            model.addAttribute("QuestionList",questions);
+            model.addAttribute("Post",post);
         } catch (NotFoundException e) {
 
-            e.printStackTrace();
+            return "redirect:/main";
 
         }
         return "form/detail";
@@ -216,6 +256,8 @@ public class WebController {
 
     @PostMapping("/user")
     public String signup(UserInfoDto infoDto) {
+
+        log.info(String.valueOf(infoDto));
 
         UserInfo user = userService.save(infoDto);
 
