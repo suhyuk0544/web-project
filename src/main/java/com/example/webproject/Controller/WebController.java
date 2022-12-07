@@ -9,6 +9,7 @@ import com.example.webproject.List.ListDaoService.ListService;
 import com.example.webproject.UserHandle.DTO.UserInfoDto;
 import com.example.webproject.UserHandle.Entity.PrincipalDetails;
 import com.example.webproject.UserHandle.Entity.UserInfo;
+import com.example.webproject.UserHandle.UserDaoService.ApiClient;
 import com.example.webproject.UserHandle.UserDaoService.CustomOAuth2UserService;
 import com.example.webproject.UserHandle.UserDaoService.UserService;
 import com.nimbusds.jose.shaded.json.JSONObject;
@@ -32,11 +33,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigInteger;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +55,8 @@ public class WebController {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
+    private final ApiClient apiClient;
+
     private final InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository;
 
 
@@ -66,25 +71,22 @@ public class WebController {
     }
 
     @GetMapping("/main/geoLocation")
-    public String GeoLocation(@AuthenticationPrincipal PrincipalDetails principalDetails,HttpServletRequest request){
+    public String GeoLocation(HttpServletRequest request){
 
-        UserInfo userInfo = principalDetails.getUser();
-
-        log.info(request.getRemoteAddr());
-
-
+        String ip = "121.163.255.47";
 
         WebClient webClient = WebClient.builder()
-                .baseUrl("https://geolocation.apigw.gov-ntruss.com/geolocation/v2/geoLocation")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader("x-ncp-apigw-timestamp",String.valueOf(System.currentTimeMillis()))
-                .defaultHeader("x-ncp-iam-access-key", ApiKey.AccessKey.getCode())
-                .defaultHeader("x-ncp-apigw-signature-v2",userService.makeSignature(String.valueOf(System.currentTimeMillis()),"GET","https://geolocation.apigw.gov-ntruss.com/geolocation/v2/geoLocation"))
+                .baseUrl("https://geolocation.apigw.ntruss.com")
+                .defaultHeader("x-ncp-apigw-timestamp",Long.toString(System.currentTimeMillis()))
+                .defaultHeader("x-ncp-iam-access-key",ApiKey.AccessKey.getCode())
+                .defaultHeader("x-ncp-apigw-signature-v2",userService.makeSignature(Long.toString(System.currentTimeMillis()),"GET","/geolocation/v2/geoLocation?ip="+ip+"&ext=t&responseFormatType=json"))
                 .build();
 
         JSONObject jsonObject = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("ip","222.101.226.135")
+                        .path("/geolocation/v2/geoLocation")
+                        .queryParam("ip",ip)
+                        .queryParam("ext","t")
                         .queryParam("responseFormatType","json")
                         .build()
                 )
@@ -92,7 +94,8 @@ public class WebController {
                 .bodyToMono(JSONObject.class)
                 .block();
 
-        log.info((String) Objects.requireNonNull(jsonObject).get("r1") + jsonObject.get("r2") + jsonObject.get("r3"));
+
+        log.info((Objects.requireNonNull(jsonObject).toJSONString()));
 
         return "redirect:/main";
     }
