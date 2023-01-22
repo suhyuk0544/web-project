@@ -15,7 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,28 +33,34 @@ public class ListService {
         return listRepository.findAll(pageable);
     }
 
-    public void SaveQuestion(Post post, QuestionDto questionDto, UserInfo userInfo){
+    public void SaveQuestion(int id, QuestionDto questionDto, UserInfo userInfo){
+        try {
+            Post post = FindById(id);
 
-        log.info(questionDto.getQuestionContent());
+            questionRepository.save(Question.builder()
+                    .username(userInfo.getName())
+                    .questionContent(questionDto.getQuestionContent())
+                    .date(questionDto.getDate())
+                    .post(post)
+                    .build());
 
-        questionRepository.save(Question.builder()
-                .username(userInfo.getName())
-                .questionContent(questionDto.getQuestionContent())
-                .date(questionDto.getDate())
-                .post(post)
-                .build());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    public Post setPost(PostDto postDto,int id) throws NotFoundException {
+    @Transactional
+    public void setPost(PostDto postDto,int id,UserInfo userInfo) throws NotFoundException {
 
+        log.info(userInfo.toString());
         Post post = FindById(id);
 
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
+        if (Objects.equals(post.getUserInfo().getName(), userInfo.getName())) {
+            post.setTitle(postDto.getTitle());
+            post.setContent(postDto.getContent());
+            log.info(post.toString());
+        }
 
-        listRepository.save(post);
-
-        return post;
     }
 
     public Post FindById(int id) throws NotFoundException{
@@ -63,7 +71,7 @@ public class ListService {
 
     public Page<Question> questions(Post post,Pageable pageable) throws NotFoundException{
 
-        return questionRepository.findQuestionsByPost(post,pageable);
+        return questionRepository.findQuestionsByPostOrderByDate(post,pageable);
     }
 
     public Post LoadOneByTitle(String title) throws NotFoundException{
@@ -87,7 +95,8 @@ public class ListService {
                         .title(postDto.getTitle())
                         .content(postDto.getContent())
                         .createTime(postDto.getCreateTime())
-                        .userInfo(user).build());
+                        .userInfo(user)
+                        .build());
             }
         }
 

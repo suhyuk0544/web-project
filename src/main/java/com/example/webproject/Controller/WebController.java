@@ -24,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -69,6 +70,66 @@ public class WebController {
 
         return "form/index";
     }
+
+    @GetMapping("/school")
+    public String School(){
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl("https://open.neis.go.kr")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, String.valueOf(MediaType.APPLICATION_JSON_UTF8))
+                .build();
+
+        net.minidev.json.JSONObject jsonObject = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/hub/mealServiceDietInfo")
+                        .queryParam("Type","json")
+                        .queryParam("KEY","73156fb2366246a2bd3456e038d04375")
+                        .queryParam("pIndex","1")
+                        .queryParam("pSize","30")
+                        .queryParam("ATPT_OFCDC_SC_CODE","J10")
+                        .queryParam("SD_SCHUL_CODE","7530581")
+                        .queryParam("MLSV_YMD","20221212")
+                        .build())
+                .retrieve()
+                .bodyToMono(net.minidev.json.JSONObject.class)
+                .block();
+
+        log.info(Objects.requireNonNull(jsonObject).toJSONString());
+
+        return "/main";
+    }
+
+    @GetMapping("/ncp")
+    public String NcpPush(){
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl("https://sens.apigw.ntruss.com")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader("x-ncp-apigw-timestamp",Long.toString(System.currentTimeMillis()))
+                .defaultHeader("x-ncp-iam-access-key",ApiKey.AccessKey.getCode())
+                .defaultHeader("x-ncp-apigw-signature-v2",userService.makeSignature(Long.toString(System.currentTimeMillis()),"GET","/push/v2"))
+                .build();
+
+        net.minidev.json.JSONObject jsonObject = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/push/v2")
+                        .queryParam("Type","json")
+                        .queryParam("KEY","73156fb2366246a2bd3456e038d04375")
+                        .queryParam("pIndex","1")
+                        .queryParam("pSize","30")
+                        .queryParam("ATPT_OFCDC_SC_CODE","J10")
+                        .queryParam("SD_SCHUL_CODE","7530581")
+                        .queryParam("MLSV_YMD","20221212")
+                        .build())
+                .retrieve()
+                .bodyToMono(net.minidev.json.JSONObject.class)
+                .block();
+
+        log.info(Objects.requireNonNull(jsonObject).toJSONString());
+
+        return "/main";
+    }
+
 
     @GetMapping("/main/geoLocation")
     public String GeoLocation(HttpServletRequest request){
@@ -119,11 +180,10 @@ public class WebController {
     }
 
     @PostMapping("/main/{id}/setPost")
-    public String setPost(PostDto postDto,@PathVariable int id) throws NotFoundException {
+    public String setPost(PostDto postDto, @PathVariable int id, @AuthenticationPrincipal PrincipalDetails principalDetails) throws NotFoundException {
 
-        Post post = listService.setPost(postDto,id);
 
-        log.info("Set Post = {}",post);
+        listService.setPost(postDto,id,principalDetails.getUser());
 
         return "redirect:/main";
     }
