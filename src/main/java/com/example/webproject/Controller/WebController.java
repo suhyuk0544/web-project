@@ -134,7 +134,7 @@ public class WebController {
     @GetMapping("/main/geoLocation")
     public String GeoLocation(HttpServletRequest request){
 
-        String ip = "121.163.255.47";
+        String ip = "";
 
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://geolocation.apigw.ntruss.com")
