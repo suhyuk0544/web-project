@@ -12,7 +12,7 @@ public class H2ServerConfig {
 
     @Bean
     public Server h2TcpServer() throws SQLException {
-        return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092").start();
+        return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9093").start();
     }
 
 }

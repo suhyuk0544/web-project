@@ -14,36 +14,5 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootTest
 class WebProjectApplicationTests {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ListRepository listRepository;
-
-
-
-    @Test
-    void contextLoads() {
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        String pw = "수혁";
-
-        pw = encoder.encode(pw);
-
-        UserInfo userInfo = new UserInfo();
-
-        userInfo.setName("장수혁");
-        userInfo.setPassword(pw);
-
-        userRepository.save(userInfo);
-
-        Post post = new Post();
-
-        post.setTitle("하하");
-        post.setContent("하하");
-
-        listRepository.save(post);
-    }
 
 }

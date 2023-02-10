@@ -14,8 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -63,6 +65,7 @@ public class ListService {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Post FindById(int id) throws NotFoundException{
 
         return listRepository.findById(id)

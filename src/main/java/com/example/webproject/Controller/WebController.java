@@ -35,6 +35,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,18 +73,18 @@ public class WebController {
     }
 
     @GetMapping("/school")
-    public String School(){
+    public Mono<String> School(){
 
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://open.neis.go.kr")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, String.valueOf(MediaType.APPLICATION_JSON_UTF8))
                 .build();
 
-        net.minidev.json.JSONObject jsonObject = webClient.get()
+        return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/hub/mealServiceDietInfo")
                         .queryParam("Type","json")
-                        .queryParam("KEY","73156fb2366246a2bd3456e038d04375")
+                        .queryParam("KEY",ApiKey.neisApiKey.getCode())
                         .queryParam("pIndex","1")
                         .queryParam("pSize","30")
                         .queryParam("ATPT_OFCDC_SC_CODE","J10")
@@ -91,16 +92,12 @@ public class WebController {
                         .queryParam("MLSV_YMD","20221212")
                         .build())
                 .retrieve()
-                .bodyToMono(net.minidev.json.JSONObject.class)
-                .block();
-
-        log.info(Objects.requireNonNull(jsonObject).toJSONString());
-
-        return "/main";
+                .bodyToMono(JSONObject.class)
+                .map(JSONObject::toString);
     }
 
     @GetMapping("/ncp")
-    public String NcpPush(){
+    public Mono<String> NcpPush(){
 
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://sens.apigw.ntruss.com")
@@ -110,11 +107,11 @@ public class WebController {
                 .defaultHeader("x-ncp-apigw-signature-v2",userService.makeSignature(Long.toString(System.currentTimeMillis()),"GET","/push/v2"))
                 .build();
 
-        net.minidev.json.JSONObject jsonObject = webClient.get()
+        return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/push/v2")
                         .queryParam("Type","json")
-                        .queryParam("KEY","73156fb2366246a2bd3456e038d04375")
+                        .queryParam("KEY",ApiKey.neisApiKey.getCode())
                         .queryParam("pIndex","1")
                         .queryParam("pSize","30")
                         .queryParam("ATPT_OFCDC_SC_CODE","J10")
@@ -122,17 +119,13 @@ public class WebController {
                         .queryParam("MLSV_YMD","20221212")
                         .build())
                 .retrieve()
-                .bodyToMono(net.minidev.json.JSONObject.class)
-                .block();
-
-        log.info(Objects.requireNonNull(jsonObject).toJSONString());
-
-        return "/main";
+                .bodyToMono(JSONObject.class)
+                .map(JSONObject::toString);
     }
 
 
     @GetMapping("/main/geoLocation")
-    public String GeoLocation(HttpServletRequest request){
+    public Mono<String> GeoLocation(HttpServletRequest request){
 
         String ip = "";
 
@@ -143,7 +136,7 @@ public class WebController {
                 .defaultHeader("x-ncp-apigw-signature-v2",userService.makeSignature(Long.toString(System.currentTimeMillis()),"GET","/geolocation/v2/geoLocation?ip="+ip+"&ext=t&responseFormatType=json"))
                 .build();
 
-        JSONObject jsonObject = webClient.get()
+        return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/geolocation/v2/geoLocation")
                         .queryParam("ip",ip)
@@ -153,12 +146,7 @@ public class WebController {
                 )
                 .retrieve()
                 .bodyToMono(JSONObject.class)
-                .block();
-
-
-        log.info((Objects.requireNonNull(jsonObject).toJSONString()));
-
-        return "redirect:/main";
+                .map(JSONObject::toString);
     }
 
     @GetMapping("/main/Profile")
@@ -258,7 +246,6 @@ public class WebController {
         OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, (String) Objects.requireNonNull(response).get("access_token"),null,null,null);
 
         log.info("{}",response.get("expires_in"));
-
 
         customOAuth2UserService.loadUser(new OAuth2UserRequest(clientRegistrations,accessToken,null));
 

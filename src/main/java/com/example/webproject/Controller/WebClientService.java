@@ -18,42 +18,42 @@ import java.util.List;
 public class WebClientService {
 
 
-    @Autowired
-    private UserService userService;
-
-    WebClient webClient = WebClient.builder()
-            .baseUrl("http://localhost:8080")
-            .build();
-
-    public Flux<Post> Profile(String username){
-
-        List<Post> posts = userService.FindUser(username).getPosts();
-
-
-        log.info("Posts = {}", posts);
-
-
-        return webClient.post()
-                .uri("/main/Profile/{username}", username)
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(posts)
-                .retrieve()
-                .bodyToMono(DataApiResponse.class)
-                .flatMapIterable(DataApiResponse::getContent);
-    }
-
-    public Mono<String> hello(){
-
-        return webClient.post()
-                .uri("/main/hello")
-                .accept(MediaType.TEXT_HTML)
-                .body(Mono.just("hi"),String.class)
-                .retrieve()
-                .bodyToMono(String.class);
-    }
-
-    @Value
-    public static class DataApiResponse {
-        List<Post> content;
-    }
+//    @Autowired
+//    private UserService userService;
+//
+//    WebClient webClient = WebClient.builder()
+//            .baseUrl("http://localhost:8080")
+//            .build();
+//
+//    public Flux<Post> Profile(String username){
+//
+//        List<Post> posts = userService.FindUser(username).getPosts();
+//
+//
+//        log.info("Posts = {}", posts);
+//
+//
+//        return webClient.post()
+//                .uri("/main/Profile/{username}", username)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .bodyValue(posts)
+//                .retrieve()
+//                .bodyToMono(DataApiResponse.class)
+//                .flatMapIterable(DataApiResponse::getContent);
+//    }
+//
+//    public Mono<String> hello(){
+//
+//        return webClient.post()
+//                .uri("/main/hello")
+//                .accept(MediaType.TEXT_HTML)
+//                .body(Mono.just("hi"),String.class)
+//                .retrieve()
+//                .bodyToMono(String.class);
+//    }
+//
+//    @Value
+//    public static class DataApiResponse {
+//        List<Post> content;
+//    }
 }

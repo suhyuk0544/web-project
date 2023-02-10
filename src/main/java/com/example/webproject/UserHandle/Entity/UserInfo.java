@@ -1,5 +1,6 @@
 package com.example.webproject.UserHandle.Entity;
 import com.example.webproject.List.Entity.Post;
+import com.example.webproject.List.Entity.Question;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micrometer.core.lang.Nullable;
 import lombok.*;
@@ -28,8 +29,7 @@ public class UserInfo {
     @CreationTimestamp
     @JsonIgnore
     private Date JoinDate;
-
-
+    
     @Column(nullable = false)
     @JsonIgnore
     @Enumerated(EnumType.STRING)
@@ -37,7 +37,6 @@ public class UserInfo {
 
     @OneToMany(mappedBy = "userInfo")
     @JsonIgnore
-    @Nullable
     private List<Post> posts = new ArrayList<>();
 
     private String provider;
@@ -66,11 +65,7 @@ public class UserInfo {
 
     @Override
     public String toString() {
-        return "UserInfo{" +
-                "name='" + name + '\'' +
-                ", JoinDate=" + JoinDate +
-                ", auth='" + auth + '\'' +
-                '}';
+        return name;
     }
 
 }

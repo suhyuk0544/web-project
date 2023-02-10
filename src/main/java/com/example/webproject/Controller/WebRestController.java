@@ -24,22 +24,13 @@ public class WebRestController {
 
     private final WebClientService webClientService;
 
-    @GetMapping("/main/Profile/{username}")
-    public List<Post> Profile(@PathVariable String username){
-
-        //        if (list.isEmpty()){
-//            webClientService.
-//        }
-
-        List<Post> posts = webClientService.Profile(username)
-                                .toStream()
-                                .collect(Collectors.toUnmodifiableList());
-
-        log.info("{}",posts);
-
-        return posts;
-
-    }
+//    @GetMapping("/main/Profile/{username}")
+//    public String Profile(@PathVariable String username){
+//
+//
+//
+//        return "";
+//    }
 
 //    @GetMapping("/main/hello")
 //    public String hello(){

@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**","/h2-console/**");
+        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**","/h2-console/**","https://geolocation.apigw.ntruss.com/**");
     }
 
     @Override
@@ -43,8 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/login", "/signup", "/user","/oauth2/**","https://nid.naver.com/**").permitAll()
-                .antMatchers("/main/**","/savePost","/formpost").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/login", "/signup", "/user","/oauth2/**","https://nid.naver.com/**","https://geolocation.apigw.ntruss.com/**").permitAll()
+                .antMatchers("/main/**","/savePost","/formpost","/main/geoLocation").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 //                .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()

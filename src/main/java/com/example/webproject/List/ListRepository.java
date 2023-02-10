@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ListRepository extends JpaRepository<Post,String> {
+public interface ListRepository extends JpaRepository<Post,Long> {
 
     @Query("select p from Post p where p.title = ?1")
     Optional<Post> findAllByTitle(String title);

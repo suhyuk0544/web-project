@@ -19,11 +19,14 @@ public class UserInfoDto implements Serializable {
     @CreationTimestamp
     private Date JoinDate;
 
+
+
     @Override
     public String toString() {
-
         return "UserInfoDto{" +
                 "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", JoinDate=" + JoinDate +
                 '}';
     }
 
